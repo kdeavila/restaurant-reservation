@@ -15,29 +15,29 @@ import {
 } from "@/ui/dialog"
 
 export function NotificationHistory() {
-  // En una aplicación real, estos datos vendrían de la base de datos
+  // In a real application, this data would come from the database
   const [notifications] = useState([
     {
       id: "1",
       type: "confirmacion",
       recipient: "maria.garcia@ejemplo.com",
-      subject: "Confirmación de Reserva - RES-001",
+      subject: "Reservation Confirmation - RES-001",
       sentAt: "17/05/2025 14:30",
-      status: "enviado",
+      status: "sent",
     },
     {
       id: "2",
       type: "modificacion",
       recipient: "juan.perez@ejemplo.com",
-      subject: "Modificación de Reserva - RES-002",
+      subject: "Reservation Modification - RES-002",
       sentAt: "16/05/2025 18:45",
-      status: "enviado",
+      status: "sent",
     },
     {
       id: "3",
       type: "cancelacion",
       recipient: "ana.rodriguez@ejemplo.com",
-      subject: "Cancelación de Reserva - RES-003",
+      subject: "Reservation Cancellation - RES-003",
       sentAt: "15/05/2025 10:15",
       status: "error",
     },
@@ -45,17 +45,17 @@ export function NotificationHistory() {
       id: "4",
       type: "confirmacion",
       recipient: "carlos.lopez@ejemplo.com",
-      subject: "Confirmación de Reserva - RES-004",
+      subject: "Reservation Confirmation - RES-004",
       sentAt: "14/05/2025 20:10",
-      status: "enviado",
+      status: "sent",
     },
     {
       id: "5",
       type: "recordatorio",
       recipient: "laura.martinez@ejemplo.com",
-      subject: "Recordatorio de Reserva - RES-005",
+      subject: "Reservation Reminder - RES-005",
       sentAt: "13/05/2025 09:30",
-      status: "enviado",
+      status: "sent",
     },
   ])
 
@@ -64,25 +64,25 @@ export function NotificationHistory() {
       case "confirmacion":
         return (
           <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-            Confirmación
+            Confirmation
           </Badge>
         )
       case "modificacion":
         return (
           <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-            Modificación
+            Modification
           </Badge>
         )
       case "cancelacion":
         return (
           <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
-            Cancelación
+            Cancellation
           </Badge>
         )
       case "recordatorio":
         return (
           <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
-            Recordatorio
+            Reminder
           </Badge>
         )
       default:
@@ -95,7 +95,7 @@ export function NotificationHistory() {
       case "enviado":
         return (
           <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-            Enviado
+            Sent
           </Badge>
         )
       case "error":
@@ -115,12 +115,12 @@ export function NotificationHistory() {
         <TableHeader>
           <TableRow>
             <TableHead>ID</TableHead>
-            <TableHead>Tipo</TableHead>
-            <TableHead>Destinatario</TableHead>
-            <TableHead>Asunto</TableHead>
-            <TableHead>Fecha de Envío</TableHead>
-            <TableHead>Estado</TableHead>
-            <TableHead className="w-[100px]">Acciones</TableHead>
+            <TableHead>Type</TableHead>
+            <TableHead>Recipient</TableHead>
+            <TableHead>Subject</TableHead>
+            <TableHead>Sent Date</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead className="w-[100px]">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -138,35 +138,34 @@ export function NotificationHistory() {
                     <DialogTrigger asChild>
                       <Button variant="ghost" size="icon">
                         <Eye className="h-4 w-4" />
-                        <span className="sr-only">Ver</span>
+                        <span className="sr-only">View</span>
                       </Button>
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
-                        <DialogTitle>{notification.subject}</DialogTitle>
+                        <DialogTitle>Email Details</DialogTitle>
                         <DialogDescription>
-                          Enviado a {notification.recipient} el {notification.sentAt}
+                          Email sent to {notification.recipient} on {notification.sentAt}
                         </DialogDescription>
                       </DialogHeader>
                       <div className="border rounded-md p-4 mt-4">
-                        <p className="mb-4">Estimado cliente,</p>
+                        <p className="mb-4">Dear customer,</p>
                         <p className="mb-4">
-                          {notification.type === "confirmacion" && "Su reserva ha sido confirmada con éxito."}
-                          {notification.type === "modificacion" && "Su reserva ha sido modificada según lo solicitado."}
-                          {notification.type === "cancelacion" && "Su reserva ha sido cancelada según lo solicitado."}
-                          {notification.type === "recordatorio" &&
-                            "Le recordamos su próxima reserva en nuestro restaurante."}
+                          {notification.type === "confirmacion" && "Your reservation has been confirmed successfully."}
+                          {notification.type === "modificacion" && "Your reservation has been modified as requested."}
+                          {notification.type === "cancelacion" && "Your reservation has been cancelled as requested."}
+                          {notification.type === "recordatorio" && "This is a reminder of your upcoming reservation at our restaurant."}
                         </p>
-                        <p className="mb-4">Detalles de la reserva:</p>
+                        <p className="mb-4">Reservation details:</p>
                         <ul className="list-disc pl-5 mb-4">
-                          <li>Fecha: 18/05/2025</li>
-                          <li>Hora: 20:30</li>
-                          <li>Número de personas: 4</li>
-                          <li>Mesa: 7</li>
+                          <li>Date: 18/05/2025</li>
+                          <li>Time: 20:30</li>
+                          <li>Number of people: 4</li>
+                          <li>Table: 7</li>
                         </ul>
-                        <p>Gracias por elegir nuestro restaurante.</p>
-                        <p className="mt-4">Atentamente,</p>
-                        <p>El equipo del Restaurante</p>
+                        <p>Thank you for choosing our restaurant.</p>
+                        <p className="mt-4">Best regards,</p>
+                        <p>The Restaurant Team</p>
                       </div>
                     </DialogContent>
                   </Dialog>
@@ -174,7 +173,7 @@ export function NotificationHistory() {
                   {notification.status === "error" && (
                     <Button variant="ghost" size="icon">
                       <RotateCw className="h-4 w-4" />
-                      <span className="sr-only">Reintentar</span>
+                      <span className="sr-only">Retry</span>
                     </Button>
                   )}
                 </div>

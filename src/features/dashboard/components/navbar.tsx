@@ -2,7 +2,6 @@
 
 import { Button } from "@/ui/button";
 import { LayoutDashboard } from "lucide-react";
-import { NotificationsPopover } from "./notifications-popover";
 import { UserDropdown } from "./user-dropdown";
 
 interface NavbarProps {
@@ -23,7 +22,6 @@ export function Navbar({ onOpenSidebar }: NavbarProps) {
 			</Button>
 			<div className="flex-1" />
 			<div className="flex items-center gap-4">
-				<NotificationsPopover />
 				<UserDropdown />
 			</div>
 		</header>

@@ -16,52 +16,52 @@ import { MoreHorizontal, Edit, Trash, Mail } from "lucide-react"
 import Link from "next/link"
 
 export function ReservationCalendar() {
-  // En una aplicación real, estos datos vendrían de la base de datos
+  // In a real application, this data would come from the database
   const [reservations] = useState([
     {
       id: "RES-001",
-      customer: "María García",
+      customer: "Maria Garcia",
       date: "17/05/2025",
       time: "19:00",
       people: 4,
       table: 7,
-      status: "confirmada",
+      status: "confirmed",
     },
     {
       id: "RES-002",
-      customer: "Juan Pérez",
+      customer: "Juan Perez",
       date: "17/05/2025",
       time: "20:30",
       people: 2,
       table: 3,
-      status: "confirmada",
+      status: "confirmed",
     },
     {
       id: "RES-003",
-      customer: "Ana Rodríguez",
+      customer: "Ana Rodriguez",
       date: "18/05/2025",
       time: "13:00",
       people: 6,
       table: 12,
-      status: "pendiente",
+      status: "pending",
     },
     {
       id: "RES-004",
-      customer: "Carlos López",
+      customer: "Carlos Lopez",
       date: "18/05/2025",
       time: "14:30",
       people: 3,
       table: 5,
-      status: "confirmada",
+      status: "confirmed",
     },
     {
       id: "RES-005",
-      customer: "Laura Martínez",
+      customer: "Laura Martinez",
       date: "19/05/2025",
       time: "21:00",
       people: 2,
       table: 8,
-      status: "confirmada",
+      status: "confirmed",
     },
   ])
 
@@ -71,13 +71,13 @@ export function ReservationCalendar() {
         <TableHeader>
           <TableRow>
             <TableHead>ID</TableHead>
-            <TableHead>Cliente</TableHead>
-            <TableHead>Fecha</TableHead>
-            <TableHead>Hora</TableHead>
-            <TableHead>Personas</TableHead>
-            <TableHead>Mesa</TableHead>
-            <TableHead>Estado</TableHead>
-            <TableHead className="w-[100px]">Acciones</TableHead>
+            <TableHead>Client</TableHead>
+            <TableHead>Date</TableHead>
+            <TableHead>Time</TableHead>
+            <TableHead>People</TableHead>
+            <TableHead>Table</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead className="w-[100px]">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -90,7 +90,7 @@ export function ReservationCalendar() {
               <TableCell>{reservation.people}</TableCell>
               <TableCell>{reservation.table}</TableCell>
               <TableCell>
-                <Badge variant={reservation.status === "confirmada" ? "default" : "outline"}>
+                <Badge variant={reservation.status === "confirmed" ? "default" : "outline"}>
                   {reservation.status}
                 </Badge>
               </TableCell>
@@ -98,26 +98,26 @@ export function ReservationCalendar() {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0">
-                      <span className="sr-only">Abrir menú</span>
+                      <span className="sr-only">Open menu</span>
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem>
-                      <Link href={`/reservas/${reservation.id}`} className="flex items-center">
+                      <Link href={`/reservations/${reservation.id}`} className="flex items-center">
                         <Edit className="mr-2 h-4 w-4" />
-                        <span>Editar</span>
+                        <span>Edit</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                       <Mail className="mr-2 h-4 w-4" />
-                      <span>Enviar confirmación</span>
+                      <span>Send confirmation</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem className="text-red-600">
                       <Trash className="mr-2 h-4 w-4" />
-                      <span>Cancelar</span>
+                      <span>Cancel</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

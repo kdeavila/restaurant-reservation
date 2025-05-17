@@ -10,41 +10,41 @@ export function RecentReservations() {
       id: "RES-001",
       customer: "María García",
       initials: "MG",
-      date: "Hoy",
+      date: "Today",
       time: "19:00",
       people: 4,
       table: 7,
-      status: "confirmada",
+      status: "confirmed",
     },
     {
       id: "RES-002",
       customer: "Juan Pérez",
       initials: "JP",
-      date: "Hoy",
+      date: "Today",
       time: "20:30",
       people: 2,
       table: 3,
-      status: "confirmada",
+      status: "confirmed",
     },
     {
       id: "RES-003",
       customer: "Ana Rodríguez",
       initials: "AR",
-      date: "Mañana",
+      date: "Tomorrow",
       time: "13:00",
       people: 6,
       table: 12,
-      status: "pendiente",
+      status: "pending",
     },
     {
       id: "RES-004",
       customer: "Carlos López",
       initials: "CL",
-      date: "Mañana",
+      date: "Tomorrow",
       time: "14:30",
       people: 3,
       table: 5,
-      status: "confirmada",
+      status: "confirmed",
     },
   ]
 
@@ -58,10 +58,10 @@ export function RecentReservations() {
           <div className="flex-1 space-y-1">
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium">{reservation.customer}</p>
-              <Badge variant={reservation.status === "confirmada" ? "default" : "outline"}>{reservation.status}</Badge>
+              <Badge variant={reservation.status === "confirmed" ? "default" : "outline"}>{reservation.status}</Badge>
             </div>
             <p className="text-xs text-muted-foreground">
-              {reservation.date} - {reservation.time} - {reservation.people} personas - Mesa {reservation.table}
+              {reservation.date} - {reservation.time} - {reservation.people} people - Table {reservation.table}
             </p>
           </div>
         </div>

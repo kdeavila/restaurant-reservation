@@ -14,75 +14,79 @@ export function EmailTemplates() {
 
   const templates = {
     confirmation: {
-      subject: "Confirmación de Reserva - [ID_RESERVA]",
-      body: `Estimado [NOMBRE_CLIENTE],
+      subject: "Reservation Confirmation - [RESERVATION_ID]",
+      body: `Dear [CUSTOMER_NAME],
 
-Nos complace confirmar su reserva en nuestro restaurante.
+We are pleased to confirm your reservation at our restaurant.
 
-Detalles de la reserva:
-- Fecha: [FECHA_RESERVA]
-- Hora: [HORA_RESERVA]
-- Número de personas: [NUM_PERSONAS]
-- Mesa: [NUMERO_MESA]
+Reservation details:
+- Date: [RESERVATION_DATE]
+- Time: [RESERVATION_TIME]
+- Number of people: [NUM_PEOPLE]
+- Table: [TABLE_NUMBER]
 
-Si necesita realizar algún cambio, por favor contáctenos.
+If you need to make any changes, please contact us.
 
-Gracias por elegir nuestro restaurante.
+Thank you for choosing us.
 
-Atentamente,
-El equipo del Restaurante`,
+Best regards,
+The Restaurant Team`,
     },
     modification: {
-      subject: "Modificación de Reserva - [ID_RESERVA]",
-      body: `Estimado [NOMBRE_CLIENTE],
+      subject: "Reservation Modification - [RESERVATION_ID]",
+      body: `Dear [CUSTOMER_NAME],
 
-Su reserva ha sido modificada según lo solicitado.
+Your reservation has been modified as requested.
 
-Nuevos detalles de la reserva:
-- Fecha: [FECHA_RESERVA]
-- Hora: [HORA_RESERVA]
-- Número de personas: [NUM_PERSONAS]
-- Mesa: [NUMERO_MESA]
+New reservation details:
+- Date: [RESERVATION_DATE]
+- Time: [RESERVATION_TIME]
+- Number of people: [NUM_PEOPLE]
+- Table: [TABLE_NUMBER]
 
-Si necesita realizar algún otro cambio, por favor contáctenos.
+If you need to make any other changes, please contact us.
 
-Gracias por elegir nuestro restaurante.
+Thank you for choosing us.
 
-Atentamente,
-El equipo del Restaurante`,
+Best regards,
+The Restaurant Team`,
     },
     cancellation: {
-      subject: "Cancelación de Reserva - [ID_RESERVA]",
-      body: `Estimado [NOMBRE_CLIENTE],
+      subject: "Reservation Cancellation - [RESERVATION_ID]",
+      body: `Dear [CUSTOMER_NAME],
 
-Su reserva ha sido cancelada según lo solicitado.
+Your reservation has been cancelled as requested.
 
-Detalles de la reserva cancelada:
-- Fecha: [FECHA_RESERVA]
-- Hora: [HORA_RESERVA]
-- Número de personas: [NUM_PERSONAS]
+Cancelled reservation details:
+- Date: [RESERVATION_DATE]
+- Time: [RESERVATION_TIME]
+- Number of people: [NUM_PEOPLE]
 
-Esperamos poder atenderle en otra ocasión.
+We hope to serve you another time.
 
-Atentamente,
-El equipo del Restaurante`,
+Thank you for your understanding.
+
+Best regards,
+The Restaurant Team`,
     },
     reminder: {
-      subject: "Recordatorio de Reserva - [ID_RESERVA]",
-      body: `Estimado [NOMBRE_CLIENTE],
+      subject: "Reservation Reminder - [RESERVATION_ID]",
+      body: `Dear [CUSTOMER_NAME],
 
-Le recordamos su próxima reserva en nuestro restaurante.
+This is a reminder of your upcoming reservation at our restaurant.
 
-Detalles de la reserva:
-- Fecha: [FECHA_RESERVA]
-- Hora: [HORA_RESERVA]
-- Número de personas: [NUM_PERSONAS]
-- Mesa: [NUMERO_MESA]
+Reservation details:
+- Date: [RESERVATION_DATE]
+- Time: [RESERVATION_TIME]
+- Number of people: [NUM_PEOPLE]
+- Table: [TABLE_NUMBER]
 
-Esperamos verle pronto.
+We look forward to seeing you soon.
 
-Atentamente,
-El equipo del Restaurante`,
+Thank you for choosing us.
+
+Best regards,
+The Restaurant Team`,
     },
   }
 
@@ -100,29 +104,29 @@ El equipo del Restaurante`,
   }
 
   const handleSave = () => {
-    // En una aplicación real, aquí se guardarían los cambios en la base de datos
-    console.log("Guardando plantilla:", activeTemplate, currentTemplate)
-    alert("Plantilla guardada correctamente")
+    // In a real application, changes would be saved to the database here
+    console.log("Saving template:", activeTemplate, currentTemplate)
+    alert("Template saved successfully")
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Plantillas de Email</CardTitle>
-        <CardDescription>Personalice las plantillas de email para las notificaciones a los clientes.</CardDescription>
+        <CardTitle>Email Templates</CardTitle>
+        <CardDescription>Customize email templates for client notifications.</CardDescription>
       </CardHeader>
       <CardContent>
         <Tabs value={activeTemplate} onValueChange={handleTemplateChange}>
           <TabsList className="grid grid-cols-4 mb-4">
-            <TabsTrigger value="confirmation">Confirmación</TabsTrigger>
-            <TabsTrigger value="modification">Modificación</TabsTrigger>
-            <TabsTrigger value="cancellation">Cancelación</TabsTrigger>
-            <TabsTrigger value="reminder">Recordatorio</TabsTrigger>
+            <TabsTrigger value="confirmation">Confirmation</TabsTrigger>
+            <TabsTrigger value="modification">Modification</TabsTrigger>
+            <TabsTrigger value="cancellation">Cancellation</TabsTrigger>
+            <TabsTrigger value="reminder">Reminder</TabsTrigger>
           </TabsList>
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="subject">Asunto</Label>
+              <Label htmlFor="subject">Subject</Label>
               <Input
                 id="subject"
                 value={currentTemplate.subject}
@@ -131,7 +135,7 @@ El equipo del Restaurante`,
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="body">Cuerpo del Email</Label>
+              <Label htmlFor="body">Body</Label>
               <Textarea
                 id="body"
                 value={currentTemplate.body}
@@ -141,28 +145,28 @@ El equipo del Restaurante`,
             </div>
 
             <div className="bg-muted p-4 rounded-md">
-              <h3 className="text-sm font-medium mb-2">Variables disponibles:</h3>
+              <h3 className="text-sm font-medium mb-2">Available Variables:</h3>
               <ul className="text-xs space-y-1">
                 <li>
-                  <code>[NOMBRE_CLIENTE]</code> - Nombre del cliente
+                  <code>[CUSTOMER_NAME]</code> - Customer name
                 </li>
                 <li>
-                  <code>[ID_RESERVA]</code> - Identificador de la reserva
+                  <code>[RESERVATION_ID]</code> - Reservation ID
                 </li>
                 <li>
-                  <code>[FECHA_RESERVA]</code> - Fecha de la reserva
+                  <code>[RESERVATION_DATE]</code> - Reservation date
                 </li>
                 <li>
-                  <code>[HORA_RESERVA]</code> - Hora de la reserva
+                  <code>[RESERVATION_TIME]</code> - Reservation time
                 </li>
                 <li>
-                  <code>[NUM_PERSONAS]</code> - Número de personas
+                  <code>[NUM_PEOPLE]</code> - Number of people
                 </li>
                 <li>
-                  <code>[NUMERO_MESA]</code> - Número de mesa asignada - Número de personas
+                  <code>[TABLE_NUMBER]</code> - Assigned table number - Número de personas
                 </li>
                 <li>
-                  <code>[NUMERO_MESA]</code> - Número de mesa asignada
+                  <code>[TABLE_NUMBER]</code> - Assigned table number
                 </li>
               </ul>
             </div>
@@ -172,7 +176,7 @@ El equipo del Restaurante`,
       <CardFooter>
         <Button onClick={handleSave}>
           <Save className="mr-2 h-4 w-4" />
-          Guardar Plantilla
+          Save Template
         </Button>
       </CardFooter>
     </Card>

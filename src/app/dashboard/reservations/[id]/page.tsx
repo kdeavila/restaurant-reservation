@@ -43,27 +43,27 @@ export default function EditReservationPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
-    // En una aplicación real, aquí se validarían los datos y se enviarían al servidor
-    console.log("Datos actualizados de la reserva:", formData)
+    // In a real app, data would be validated and sent to the server
+    console.log("Updated reservation data:", formData)
 
-    // Redirigir a la lista de reservas
-    router.push("/reservas")
+    // Redirect to reservations list
+    router.push("/dashboard/reservations")
   }
 
   const handleCancel = () => {
-    // En una aplicación real, aquí se cancelaría la reserva
-    console.log("Cancelando reserva:", reservationId)
+    // In a real app, the reservation would be cancelled here
+    console.log("Cancelling reservation:", reservationId)
 
-    // Redirigir a la lista de reservas
-    router.push("/reservas")
+    // Redirect to reservations list
+    router.push("/dashboard/reservations")
   }
 
   const handleSendConfirmation = () => {
-    // En una aplicación real, aquí se enviaría el correo de confirmación
-    console.log("Enviando confirmación para la reserva:", reservationId)
+    // In a real app, confirmation email would be sent here
+    console.log("Sending confirmation for reservation:", reservationId)
 
-    // Mostrar mensaje de éxito
-    alert("Correo de confirmación enviado correctamente")
+    // Show success message
+    alert("Confirmation email sent successfully")
   }
 
   return (
@@ -74,35 +74,35 @@ export default function EditReservationPage() {
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold tracking-tight">Editar Reserva {reservationId}</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Edit Reservation {reservationId}</h1>
       </div>
 
       <Card className="max-w-2xl">
         <form onSubmit={handleSubmit}>
           <CardHeader>
-            <CardTitle>Información de la Reserva</CardTitle>
-            <CardDescription>Actualice los datos de la reserva.</CardDescription>
+            <CardTitle>Reservation Information</CardTitle>
+            <CardDescription>Update the reservation details.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>Cliente *</Label>
+              <Label>Client *</Label>
               <CustomerSelector />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Fecha *</Label>
+                <Label>Date *</Label>
                 <DatePicker />
               </div>
 
               <div className="space-y-2">
-                <Label>Hora *</Label>
+                <Label>Time *</Label>
                 <TimePicker />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="people">Número de personas *</Label>
+              <Label htmlFor="people">Number of people *</Label>
               <Input
                 id="people"
                 name="people"
@@ -115,7 +115,7 @@ export default function EditReservationPage() {
             </div>
 
             <div className="space-y-2">
-              <Label>Mesa *</Label>
+              <Label>Table *</Label>
               <TableSelector />
             </div>
           </CardContent>
@@ -130,15 +130,15 @@ export default function EditReservationPage() {
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>¿Está seguro?</AlertDialogTitle>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Esta acción no se puede deshacer. La reserva será cancelada y la mesa quedará disponible.
+                      This action cannot be undone. The reservation will be cancelled and the table will become available.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Volver</AlertDialogCancel>
+                    <AlertDialogCancel>Back</AlertDialogCancel>
                     <AlertDialogAction onClick={handleCancel} className="bg-red-600">
-                      Cancelar Reserva
+                      Cancel Reservation
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
@@ -146,13 +146,13 @@ export default function EditReservationPage() {
 
               <Button variant="outline" type="button" onClick={handleSendConfirmation}>
                 <Mail className="mr-2 h-4 w-4" />
-                Enviar Confirmación
+                Send Confirmation
               </Button>
             </div>
 
             <Button type="submit">
               <Save className="mr-2 h-4 w-4" />
-              Guardar Cambios
+              Save Changes
             </Button>
           </CardFooter>
         </form>

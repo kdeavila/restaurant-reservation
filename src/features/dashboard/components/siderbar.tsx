@@ -12,7 +12,7 @@ export function Sidebar() {
   const routes = [
     {
       href: "/dashboard",
-      label: "Dashboard",
+      label: "Home",
       icon: LayoutDashboard,
     },
     {

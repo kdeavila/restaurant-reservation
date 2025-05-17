@@ -66,10 +66,10 @@ export default function NewTablePage() {
 
     if (validateForm()) {
       // En una aplicación real, aquí se enviarían los datos al servidor
-      console.log("Datos de la nueva mesa:", formData)
+      console.log("New table data:", formData)
 
-      // Redirigir a la lista de mesas
-      router.push("/mesas")
+      // Redirect to tables list
+      router.push("/dashboard/tables")
     }
   }
 
@@ -81,18 +81,18 @@ export default function NewTablePage() {
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold tracking-tight">Nueva Mesa</h1>
+        <h1 className="text-3xl font-bold tracking-tight">New Table</h1>
       </div>
 
       <Card className="max-w-2xl">
         <form onSubmit={handleSubmit}>
           <CardHeader>
-            <CardTitle>Información de la Mesa</CardTitle>
-            <CardDescription>Ingrese los datos de la nueva mesa para registrarla en el sistema.</CardDescription>
+            <CardTitle>Table Information</CardTitle>
+            <CardDescription>Enter the details of the new table to register it in the system.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="capacity">Capacidad (personas) *</Label>
+              <Label htmlFor="capacity">Capacity *</Label>
               <Input
                 id="capacity"
                 name="capacity"
@@ -106,28 +106,28 @@ export default function NewTablePage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="location">Ubicación *</Label>
+              <Label htmlFor="location">Location *</Label>
               <Select value={formData.location} onValueChange={(value) => handleSelectChange("location", value)}>
                 <SelectTrigger id="location">
-                  <SelectValue placeholder="Seleccionar ubicación" />
+                  <SelectValue placeholder="Select location" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Ventana">Ventana</SelectItem>
-                  <SelectItem value="Terraza">Terraza</SelectItem>
-                  <SelectItem value="Interior">Interior</SelectItem>
-                  <SelectItem value="Salón VIP">Salón VIP</SelectItem>
+                  <SelectItem value="window">Window</SelectItem>
+                  <SelectItem value="terrace">Terrace</SelectItem>
+                  <SelectItem value="indoor">Indoor</SelectItem>
+                  <SelectItem value="bar">Bar</SelectItem>
                 </SelectContent>
               </Select>
               {errors.location && <p className="text-sm text-red-500">{errors.location}</p>}
             </div>
           </CardContent>
           <CardFooter className="flex justify-between">
-            <Button variant="outline" type="button" onClick={() => router.push("/mesas")}>
-              Cancelar
+            <Button variant="outline" type="button" onClick={() => router.push("/dashboard/tables")}>
+              Cancel
             </Button>
             <Button type="submit">
               <Save className="mr-2 h-4 w-4" />
-              Guardar Mesa
+              Create Table
             </Button>
           </CardFooter>
         </form>

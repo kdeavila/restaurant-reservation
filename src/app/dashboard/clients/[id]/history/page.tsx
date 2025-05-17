@@ -17,7 +17,7 @@ export default function CustomerHistoryPage() {
   const [customer] = useState({
     id: customerId,
     name: "María García",
-    email: "maria.garcia@ejemplo.com",
+    email: "maria.garcia@example.com",
     phone: "612345678",
   })
 
@@ -28,7 +28,7 @@ export default function CustomerHistoryPage() {
       time: "20:30",
       people: 4,
       table: 7,
-      status: "completada",
+      status: "completed",
     },
     {
       id: "RES-002",
@@ -36,7 +36,7 @@ export default function CustomerHistoryPage() {
       time: "14:00",
       people: 2,
       table: 3,
-      status: "completada",
+      status: "completed",
     },
     {
       id: "RES-003",
@@ -44,7 +44,7 @@ export default function CustomerHistoryPage() {
       time: "19:00",
       people: 4,
       table: 7,
-      status: "confirmada",
+      status: "confirmed",
     },
     {
       id: "RES-004",
@@ -52,7 +52,7 @@ export default function CustomerHistoryPage() {
       time: "21:30",
       people: 6,
       table: 12,
-      status: "pendiente",
+      status: "pending",
     },
     {
       id: "RES-005",
@@ -60,34 +60,34 @@ export default function CustomerHistoryPage() {
       time: "13:30",
       people: 3,
       table: 5,
-      status: "cancelada",
+      status: "cancelled",
     },
   ])
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "confirmada":
+      case "confirmed":
         return (
           <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-            Confirmada
+            Confirmed
           </Badge>
         )
-      case "pendiente":
+      case "pending":
         return (
           <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
-            Pendiente
+            Pending 
           </Badge>
         )
-      case "completada":
+      case "completed":
         return (
           <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-            Completada
+            Completed
           </Badge>
         )
-      case "cancelada":
+      case "cancelled":
         return (
           <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
-            Cancelada
+            Cancelled
           </Badge>
         )
       default:
@@ -103,7 +103,7 @@ export default function CustomerHistoryPage() {
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold tracking-tight">Historial de Reservas</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Reservation History</h1>
       </div>
 
       <Card>
@@ -117,12 +117,12 @@ export default function CustomerHistoryPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>Fecha</TableHead>
-                <TableHead>Hora</TableHead>
-                <TableHead>Personas</TableHead>
-                <TableHead>Mesa</TableHead>
-                <TableHead>Estado</TableHead>
+                <TableHead>Reservation ID</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Time</TableHead>
+                <TableHead>People</TableHead>
+                <TableHead>Table</TableHead>
+                <TableHead>Status</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

@@ -7,28 +7,28 @@ export function ReservationStats() {
   // En una aplicación real, estos datos vendrían de la base de datos
   const stats = [
     {
-      title: "Reservas Hoy",
+      title: "Reservations Today",
       value: "12",
       icon: CalendarDays,
-      description: "3 pendientes",
+      description: "3 pending",
     },
     {
-      title: "Clientes Registrados",
+      title: "Registered Clients",
       value: "245",
       icon: Users,
-      description: "+5 esta semana",
+      description: "+5 this week",
     },
     {
-      title: "Próxima Reserva",
+      title: "Next Reservation",
       value: "15:30",
       icon: Clock,
-      description: "Mesa 4 - 3 personas",
+      description: "Table 4 - 3 people",
     },
     {
-      title: "Mesas Disponibles",
+      title: "Available Tables",
       value: "8/15",
       icon: CheckCircle,
-      description: "53% disponibilidad",
+      description: "53% availability",
     },
   ];
 

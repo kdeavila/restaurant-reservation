@@ -3,7 +3,7 @@ import { Clock } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/select"
 
 export function TimePicker() {
-  // Generar horas disponibles (de 12:00 a 23:00 cada 30 minutos)
+  // Generate available times (from 12:00 to 23:00 every 30 minutes)
   const timeSlots = []
   for (let hour = 12; hour < 24; hour++) {
     for (const minute of [0, 30]) {
@@ -18,7 +18,7 @@ export function TimePicker() {
       <SelectTrigger className="w-full">
         <div className="flex items-center">
           <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
-          <SelectValue placeholder="Seleccionar hora" />
+          <SelectValue placeholder="Select time" />
         </div>
       </SelectTrigger>
       <SelectContent>

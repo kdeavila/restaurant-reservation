@@ -75,53 +75,53 @@ export default function NewCustomerPage() {
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold tracking-tight">Nuevo Cliente</h1>
+        <h1 className="text-3xl font-bold tracking-tight">New Client</h1>
       </div>
 
       <Card className="max-w-2xl">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6flex flex-col gap-6">
           <CardHeader>
-            <CardTitle>Información del Cliente</CardTitle>
-            <CardDescription>Ingrese los datos del nuevo cliente para registrarlo en el sistema.</CardDescription>
+            <CardTitle>Client Information</CardTitle>
+            <CardDescription>Enter the new client's data to register it in the system.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Nombre completo *</Label>
+              <Label htmlFor="name">Full name *</Label>
               <Input
                 id="name"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="Nombre y apellidos"
+                placeholder="Full name"
               />
               {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Correo electrónico *</Label>
+              <Label htmlFor="email">Email *</Label>
               <Input
                 id="email"
                 name="email"
                 type="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="ejemplo@correo.com"
+                placeholder="example@example.com"
               />
               {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone">Teléfono (opcional)</Label>
+              <Label htmlFor="phone">Phone (optional)</Label>
               <Input id="phone" name="phone" value={formData.phone} onChange={handleChange} placeholder="612345678" />
             </div>
           </CardContent>
           <CardFooter className="flex justify-between">
             <Button variant="outline" type="button" onClick={() => router.push("/clientes")}>
-              Cancelar
+              Cancel
             </Button>
             <Button type="submit">
               <Save className="mr-2 h-4 w-4" />
-              Guardar Cliente
+              Save Client
             </Button>
           </CardFooter>
         </form>

@@ -36,8 +36,8 @@ export function TableSelector() {
             disabled={table.status === "ocupada"}
             onClick={() => setSelectedTable(table.id)}
           >
-            <span className="text-sm font-medium">Mesa {table.id}</span>
-            <span className="text-xs">{table.capacity} personas</span>
+            <span className="text-sm font-medium">Table {table.id}</span>
+            <span className="text-xs">{table.capacity} people</span>
           </Button>
         ))}
       </div>

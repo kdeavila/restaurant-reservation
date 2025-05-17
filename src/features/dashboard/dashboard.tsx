@@ -23,9 +23,9 @@ export default function Dashboard() {
 			<div className="grid gap-6 md:grid-cols-2">
 				<Card>
 					<CardHeader>
-						<CardTitle>Reservas Recientes</CardTitle>
+						<CardTitle>Recent Reservations</CardTitle>
 						<CardDescription>
-							Las últimas reservas realizadas en el sistema
+							Recent reservations made in the system
 						</CardDescription>
 					</CardHeader>
 					<CardContent>
@@ -35,7 +35,7 @@ export default function Dashboard() {
 
 				<Card>
 					<CardHeader>
-						<CardTitle>Disponibilidad de Mesas</CardTitle>
+						<CardTitle>Tables Availability</CardTitle>
 						<CardDescription>
 							Current status of the restaurant's tables
 						</CardDescription>

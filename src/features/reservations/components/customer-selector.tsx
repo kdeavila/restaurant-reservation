@@ -40,21 +40,21 @@ export function CustomerSelector() {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="outline" aria-expanded={open} className="w-full justify-between">
-          {value ? customers.find((customer) => customer.value === value)?.label : "Seleccionar cliente..."}
+          {value ? customers.find((customer) => customer.value === value)?.label : "Select client..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[300px] p-0">
         <Command>
-          <CommandInput placeholder="Buscar cliente..." />
+          <CommandInput placeholder="Search client..." />
           <CommandList>
             <CommandEmpty>
               <div className="flex flex-col items-center justify-center py-4">
-                <p className="text-sm text-muted-foreground">No se encontraron clientes.</p>
+                <p className="text-sm text-muted-foreground">No clients found.</p>
                 <Link href="/dashboard/clients/new">
                   <Button variant="outline" className="mt-2">
                     <UserPlus className="mr-2 h-4 w-4" />
-                    Nuevo Cliente
+                    New Client
                   </Button>
                 </Link>
               </div>

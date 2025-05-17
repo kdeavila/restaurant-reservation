@@ -8,18 +8,18 @@ export default function TablesPage() {
 	return (
 		<div className="space-y-6">
 			<div className="flex items-center justify-between">
-				<h1 className="text-3xl font-bold tracking-tight">Mesas</h1>
+				<h1 className="text-3xl font-bold tracking-tight">Tables</h1>
 				<Link href="/dashboard/tables/new">
 					<Button>
 						<PlusCircle className="mr-2 h-4 w-4" />
-						Nueva Mesa
+						New Table
 					</Button>
 				</Link>
 			</div>
 
 			<div className="flex items-center gap-2">
-				<Input placeholder="Buscar mesas..." className="max-w-sm" />
-				<Button variant="outline">Buscar</Button>
+				<Input placeholder="Search tables..." className="max-w-sm" />
+				<Button variant="outline">Search</Button>
 			</div>
 
 			<TableManagement />
