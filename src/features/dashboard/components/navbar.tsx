@@ -3,6 +3,7 @@
 import { Button } from "@/ui/button";
 import { LayoutDashboard } from "lucide-react";
 import { UserDropdown } from "./user-dropdown";
+import { ToggleTheme } from "./toggle-theme";
 
 interface NavbarProps {
 	onOpenSidebar: () => void;
@@ -22,6 +23,7 @@ export function Navbar({ onOpenSidebar }: NavbarProps) {
 			</Button>
 			<div className="flex-1" />
 			<div className="flex items-center gap-4">
+				<ToggleTheme />
 				<UserDropdown />
 			</div>
 		</header>
