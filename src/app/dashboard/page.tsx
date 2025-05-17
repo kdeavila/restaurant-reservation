@@ -1,5 +1,5 @@
-import Dashboard from "@/features/dasboard/dashboard";
+import Dashboard from "@/features/dashboard/dashboard";
 
-export default function Login() {
+export default function DashboardPage() {
 	return <Dashboard />;
 }
