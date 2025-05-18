@@ -7,8 +7,8 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/ui/card";
-import { ReservationStats } from "./components/reservation-stats";
 import { RecentReservations } from "./components/recent-reservations";
+import { ReservationStats } from "./components/reservation-stats";
 import { TableAvailability } from "./components/table-availability";
 
 export default function Dashboard() {

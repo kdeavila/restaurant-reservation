@@ -75,8 +75,12 @@ export default function LoginPage() {
 						<Button type="submit" className="w-full" disabled={isLoading}>
 							{isLoading ? (
 								<span className="flex items-center gap-2">
-									<svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" aria-label="Loading">
-									<title>Loading...</title>
+									<svg
+										className="h-4 w-4 animate-spin"
+										viewBox="0 0 24 24"
+										aria-label="Loading"
+									>
+										<title>Loading...</title>
 										<circle
 											className="opacity-25"
 											cx="12"

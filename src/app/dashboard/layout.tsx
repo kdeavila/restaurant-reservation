@@ -1,9 +1,9 @@
 "use client";
 
-import { Sheet, SheetContent } from "@/ui/sheet";
-import { useState } from "react";
 import { Navbar } from "@/features/dashboard/components/navbar";
 import { Sidebar } from "@/features/dashboard/components/siderbar";
+import { Sheet, SheetContent } from "@/ui/sheet";
+import { useState } from "react";
 
 export default function Dashboard({ children }: { children: React.ReactNode }) {
 	const [open, setOpen] = useState(false);
@@ -26,9 +26,7 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
 					<Sidebar />
 				</aside>
 
-				<main className="flex-1 p-4 md:p-6">
-					{children}
-				</main>
+				<main className="flex-1 p-4 md:p-6">{children}</main>
 			</div>
 		</div>
 	);

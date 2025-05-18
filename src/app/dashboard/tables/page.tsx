@@ -1,6 +1,6 @@
+import { TableManagement } from "@/features/tables/components/table-management";
 import { Button } from "@/ui/button";
 import { Input } from "@/ui/input";
-import { TableManagement } from "@/features/tables/components/table-management";
 import { PlusCircle } from "lucide-react";
 import Link from "next/link";
 

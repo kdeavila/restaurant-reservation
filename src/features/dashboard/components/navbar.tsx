@@ -2,8 +2,8 @@
 
 import { Button } from "@/ui/button";
 import { LayoutDashboard } from "lucide-react";
-import { UserDropdown } from "./user-dropdown";
 import { ToggleTheme } from "./toggle-theme";
+import { UserDropdown } from "./user-dropdown";
 
 interface NavbarProps {
 	onOpenSidebar: () => void;
