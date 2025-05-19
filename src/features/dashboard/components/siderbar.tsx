@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/context/auth-context";
 import { cn } from "@/lib/utils";
 import { Button } from "@/ui/button";
 import {
@@ -15,6 +16,7 @@ import { usePathname } from "next/navigation";
 
 export function Sidebar() {
 	const pathname = usePathname();
+	const { logout } = useAuth();
 
 	const routes = [
 		{
@@ -69,7 +71,11 @@ export function Sidebar() {
 				))}
 			</div>
 			<div className="p-4 border-t">
-				<Button variant="outline" className="w-full justify-start">
+				<Button 
+					variant="outline" 
+					className="w-full justify-start"
+					onClick={logout}
+				>
 					<LogOut className="mr-2 h-5 w-5" />
 					Logout
 				</Button>

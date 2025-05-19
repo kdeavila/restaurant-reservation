@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/context/auth-context";
 import { Button } from "@/ui/button";
 import {
 	Card,
@@ -16,21 +17,18 @@ import { type FormEvent, useState } from "react";
 
 export default function LoginPage() {
 	const router = useRouter();
+	const { login, isLoading, error } = useAuth();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const [isLoading, setIsLoading] = useState(false);
 
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		setIsLoading(true);
 
 		try {
-			await new Promise((resolve) => setTimeout(resolve, 1000));
-			router.push("/dashboard");
+			await login(email, password);
+			// La redirección se maneja dentro de la función login
 		} catch (error) {
-			console.error("Login failed:", error);
-		} finally {
-			setIsLoading(false);
+			// Error ya se maneja en el contexto
 		}
 	};
 
@@ -40,10 +38,10 @@ export default function LoginPage() {
 				<CardHeader className="space-y-1">
 					<div className="flex items-center justify-center gap-2">
 						<LayoutDashboard className="h-6 w-6" />
-						<CardTitle className="text-2xl">Login</CardTitle>
+						<CardTitle className="text-2xl">Iniciar Sesión</CardTitle>
 					</div>
 					<CardDescription className="text-center">
-						Enter your credentials to access your dashboard
+						Ingresa tus credenciales para acceder a tu cuenta
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="space-y-4">
@@ -53,7 +51,7 @@ export default function LoginPage() {
 							<Input
 								id="email"
 								type="email"
-								placeholder="your@email.com"
+								placeholder="tu@email.com"
 								value={email}
 								onChange={(e) => setEmail(e.target.value)}
 								required
@@ -61,7 +59,7 @@ export default function LoginPage() {
 						</div>
 						<div className="space-y-2">
 							<div className="flex items-center justify-between">
-								<Label htmlFor="password">Password</Label>
+								<Label htmlFor="password">Contraseña</Label>
 							</div>
 							<Input
 								id="password"
@@ -80,7 +78,7 @@ export default function LoginPage() {
 										viewBox="0 0 24 24"
 										aria-label="Loading"
 									>
-										<title>Loading...</title>
+										<title>Cargando...</title>
 										<circle
 											className="opacity-25"
 											cx="12"
@@ -96,12 +94,12 @@ export default function LoginPage() {
 											d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
 										/>
 									</svg>
-									Signing in...
+									Iniciando sesión...
 								</span>
 							) : (
 								<>
 									<LogIn className="mr-2 h-4 w-4" />
-									Sign In
+									Iniciar Sesión
 								</>
 							)}
 						</Button>

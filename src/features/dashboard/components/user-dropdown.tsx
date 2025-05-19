@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/context/auth-context";
 import { Button } from "@/ui/button";
 import {
 	Dialog,
@@ -18,15 +19,24 @@ import {
 	DropdownMenuTrigger,
 } from "@/ui/dropdown-menu";
 import { ChevronDown, LogOut, Settings, User } from "lucide-react";
+import { useState } from "react";
 
 export function UserDropdown() {
+	const { user, logout } = useAuth();
+	const [isOpen, setIsOpen] = useState(false);
+
+	const handleLogout = () => {
+		logout();
+		setIsOpen(false);
+	};
+
 	return (
 		<>
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild>
 					<Button variant="ghost" className="flex items-center gap-2">
 						<User className="h-5 w-5" />
-						<span>John Doe</span>
+						<span>{user?.name || "Usuario"}</span>
 						<ChevronDown className="h-4 w-4" />
 					</Button>
 				</DropdownMenuTrigger>
@@ -40,7 +50,7 @@ export function UserDropdown() {
 						Settings
 					</DropdownMenuItem>
 					<DropdownMenuSeparator />
-					<Dialog>
+					<Dialog open={isOpen} onOpenChange={setIsOpen}>
 						<DialogTrigger asChild>
 							<DropdownMenuItem onSelect={(e) => e.preventDefault()}>
 								<LogOut className="mr-2 h-4 w-4" />
@@ -56,8 +66,8 @@ export function UserDropdown() {
 								</DialogDescription>
 							</DialogHeader>
 							<DialogFooter>
-								<Button variant="outline">Cancel</Button>
-								<Button>Logout</Button>
+								<Button variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
+								<Button onClick={handleLogout}>Logout</Button>
 							</DialogFooter>
 						</DialogContent>
 					</Dialog>
