@@ -49,27 +49,14 @@ export default function EditReservationPage() {
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-
-		// In a real app, data would be validated and sent to the server
-		console.log("Updated reservation data:", formData);
-
-		// Redirect to reservations list
 		router.push("/dashboard/reservations");
 	};
 
 	const handleCancel = () => {
-		// In a real app, the reservation would be cancelled here
-		console.log("Cancelling reservation:", reservationId);
-
-		// Redirect to reservations list
 		router.push("/dashboard/reservations");
 	};
 
 	const handleSendConfirmation = () => {
-		// In a real app, confirmation email would be sent here
-		console.log("Sending confirmation for reservation:", reservationId);
-
-		// Show success message
 		alert("Confirmation email sent successfully");
 	};
 

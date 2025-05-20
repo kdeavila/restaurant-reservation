@@ -89,7 +89,7 @@ export default function NewTablePage() {
 	return (
 		<div className="space-y-6">
 			<div className="flex items-center gap-2">
-				<Link href="/mesas">
+				<Link href="/tables">
 					<Button variant="outline" size="icon">
 						<ArrowLeft className="h-4 w-4" />
 					</Button>

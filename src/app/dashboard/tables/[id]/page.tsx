@@ -82,11 +82,7 @@ export default function EditTablePage() {
 		e.preventDefault();
 
 		if (validateForm()) {
-			// En una aplicación real, aquí se enviarían los datos al servidor
-			console.log("Datos actualizados de la mesa:", formData);
-
-			// Redirigir a la lista de mesas
-			router.push("/mesas");
+			router.push("/tables");
 		}
 	};
 
@@ -99,7 +95,7 @@ export default function EditTablePage() {
 					</Button>
 				</Link>
 				<h1 className="text-3xl font-bold tracking-tight">
-					Editar Mesa {tableId}
+					Edit table {tableId}
 				</h1>
 			</div>
 
@@ -151,7 +147,7 @@ export default function EditTablePage() {
 						<Button
 							variant="outline"
 							type="button"
-							onClick={() => router.push("/mesas")}
+							onClick={() => router.push("/tables")}
 						>
 							Cancelar
 						</Button>

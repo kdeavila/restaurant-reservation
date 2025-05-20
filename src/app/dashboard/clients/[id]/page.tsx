@@ -70,11 +70,7 @@ export default function EditCustomerPage() {
 		e.preventDefault();
 
 		if (validateForm()) {
-			// En una aplicación real, aquí se enviarían los datos al servidor
-			console.log("Datos actualizados del cliente:", formData);
-
-			// Redirigir a la lista de clientes
-			router.push("/clientes");
+			router.push("/clients");
 		}
 	};
 

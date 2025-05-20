@@ -66,11 +66,7 @@ export default function NewCustomerPage() {
 		e.preventDefault();
 
 		if (validateForm()) {
-			// En una aplicación real, aquí se enviarían los datos al servidor
-			console.log("Datos del cliente:", formData);
-
-			// Redirigir a la lista de clientes
-			router.push("/clientes");
+			router.push("/clients");
 		}
 	};
 

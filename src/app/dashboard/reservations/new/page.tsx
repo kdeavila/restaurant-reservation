@@ -42,12 +42,7 @@ export default function NewReservationPage() {
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-
-		// En una aplicación real, aquí se validarían los datos y se enviarían al servidor
-		console.log("Datos de la reserva:", formData);
-
-		// Redirigir a la lista de reservas
-		router.push("/reservas");
+		router.push("/dashboard/reservations");
 	};
 
 	return (
