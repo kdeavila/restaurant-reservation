@@ -2,6 +2,7 @@
 
 import type React from "react";
 
+import { getUserById } from "@/features/clients/services/client-service";
 import { Button } from "@/ui/button";
 import {
 	Card,
@@ -13,27 +14,56 @@ import {
 } from "@/ui/card";
 import { Input } from "@/ui/input";
 import { Label } from "@/ui/label";
+import { toast } from "@/hooks/use-toast";
 import { ArrowLeft, Save } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function EditCustomerPage() {
 	const params = useParams();
 	const router = useRouter();
-	const customerId = params.id;
+	const customerId = params.id as string;
 
-	// En una aplicación real, estos datos vendrían de la base de datos
 	const [formData, setFormData] = useState({
-		name: "María García",
-		email: "maria.garcia@ejemplo.com",
-		phone: "612345678",
+		name: "",
+		email: "",
+		phone: "",
 	});
 
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
 	const [errors, setErrors] = useState({
 		name: "",
 		email: "",
 	});
+
+	useEffect(() => {
+		const fetchCustomerData = async () => {
+			try {
+				setLoading(true);
+				const userData = await getUserById(customerId);
+				
+				if (!userData) {
+					setError("Cliente no encontrado");
+					return;
+				}
+				
+				setFormData({
+					name: userData.name,
+					email: userData.email,
+					phone: userData.phone || "",
+				});
+			} catch (err) {
+				console.error("Error fetching customer data:", err);
+				setError("Error al cargar los datos del cliente");
+			} finally {
+				setLoading(false);
+			}
+		};
+		
+		fetchCustomerData();
+	}, [customerId]);
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
@@ -70,9 +100,31 @@ export default function EditCustomerPage() {
 		e.preventDefault();
 
 		if (validateForm()) {
-			router.push("/clients");
+			// En una implementación real, aquí enviaríamos los datos al servidor
+			// Por ahora, solo mostraremos un mensaje de éxito
+			toast({
+				title: "Cambios guardados",
+				description: "Los datos del cliente han sido actualizados",
+			});
+			router.push("/dashboard/clients");
 		}
 	};
+
+	if (loading) {
+		return (
+			<div className="flex justify-center items-center h-64">
+				<p>Cargando datos del cliente...</p>
+			</div>
+		);
+	}
+
+	if (error) {
+		return (
+			<div className="flex justify-center items-center h-64">
+				<p className="text-red-500">{error}</p>
+			</div>
+		);
+	}
 
 	return (
 		<div className="space-y-6">

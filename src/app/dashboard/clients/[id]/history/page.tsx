@@ -1,5 +1,6 @@
 "use client";
 
+import { getUserById } from "@/features/clients/services/client-service";
 import { Badge } from "@/ui/badge";
 import { Button } from "@/ui/button";
 import {
@@ -20,62 +21,75 @@ import {
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+interface HistoryEntry {
+	id: string;
+	date: string;
+	action: string;
+	details?: {
+		time?: string;
+		people?: number;
+		table?: number;
+		status?: string;
+	};
+}
 
 export default function CustomerHistoryPage() {
 	const params = useParams();
-	const customerId = params.id;
+	const customerId = params.id as string;
 
-	// En una aplicación real, estos datos vendrían de la base de datos
-	const [customer] = useState({
-		id: customerId,
-		name: "María García",
-		email: "maria.garcia@example.com",
-		phone: "612345678",
-	});
+	const [customer, setCustomer] = useState<{
+		id: string;
+		name: string;
+		email: string;
+		phone: string;
+	} | null>(null);
+	
+	const [history, setHistory] = useState<HistoryEntry[]>([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
 
-	const [reservations] = useState([
-		{
-			id: "RES-001",
-			date: "15/04/2025",
-			time: "20:30",
-			people: 4,
-			table: 7,
-			status: "completed",
-		},
-		{
-			id: "RES-002",
-			date: "01/05/2025",
-			time: "14:00",
-			people: 2,
-			table: 3,
-			status: "completed",
-		},
-		{
-			id: "RES-003",
-			date: "17/05/2025",
-			time: "19:00",
-			people: 4,
-			table: 7,
-			status: "confirmed",
-		},
-		{
-			id: "RES-004",
-			date: "25/05/2025",
-			time: "21:30",
-			people: 6,
-			table: 12,
-			status: "pending",
-		},
-		{
-			id: "RES-005",
-			date: "10/04/2025",
-			time: "13:30",
-			people: 3,
-			table: 5,
-			status: "cancelled",
-		},
-	]);
+	useEffect(() => {
+		const fetchCustomerData = async () => {
+			try {
+				setLoading(true);
+				const userData = await getUserById(customerId);
+				
+				if (!userData) {
+					setError("Cliente no encontrado");
+					return;
+				}
+				
+				setCustomer({
+					id: userData._id,
+					name: userData.name,
+					email: userData.email,
+					phone: userData.phone || "N/A",
+				});
+				
+				// Convertir el historial a un formato más útil para mostrar
+				const formattedHistory: HistoryEntry[] = userData.history.map((item, index) => ({
+					id: `ACT-${index + 1}`.padStart(7, '0'),
+					date: new Date(item.date).toLocaleDateString(),
+					action: item.action,
+					details: {
+						// Aquí podríamos extraer más detalles si estuvieran disponibles en el historial
+						status: "completed"
+					}
+				}));
+				
+				setHistory(formattedHistory);
+			} catch (err) {
+				console.error("Error fetching customer data:", err);
+				setError("Error al cargar los datos del cliente");
+			} finally {
+				setLoading(false);
+			}
+		};
+		
+		fetchCustomerData();
+	}, [customerId]);
 
 	const getStatusBadge = (status: string) => {
 		switch (status) {
@@ -120,6 +134,22 @@ export default function CustomerHistoryPage() {
 		}
 	};
 
+	if (loading) {
+		return (
+			<div className="flex justify-center items-center h-64">
+				<p>Cargando datos del cliente...</p>
+			</div>
+		);
+	}
+
+	if (error || !customer) {
+		return (
+			<div className="flex justify-center items-center h-64">
+				<p className="text-red-500">{error || "Error al cargar los datos"}</p>
+			</div>
+		);
+	}
+
 	return (
 		<div className="space-y-6">
 			<div className="flex items-center gap-2">
@@ -129,7 +159,7 @@ export default function CustomerHistoryPage() {
 					</Button>
 				</Link>
 				<h1 className="text-3xl font-bold tracking-tight">
-					Reservation History
+					Historial del Cliente
 				</h1>
 			</div>
 
@@ -141,32 +171,36 @@ export default function CustomerHistoryPage() {
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<Table>
-						<TableHeader>
-							<TableRow>
-								<TableHead>Reservation ID</TableHead>
-								<TableHead>Date</TableHead>
-								<TableHead>Time</TableHead>
-								<TableHead>People</TableHead>
-								<TableHead>Table</TableHead>
-								<TableHead>Status</TableHead>
-							</TableRow>
-						</TableHeader>
-						<TableBody>
-							{reservations.map((reservation) => (
-								<TableRow key={reservation.id}>
-									<TableCell className="font-medium">
-										{reservation.id}
-									</TableCell>
-									<TableCell>{reservation.date}</TableCell>
-									<TableCell>{reservation.time}</TableCell>
-									<TableCell>{reservation.people}</TableCell>
-									<TableCell>{reservation.table}</TableCell>
-									<TableCell>{getStatusBadge(reservation.status)}</TableCell>
+					{history.length === 0 ? (
+						<div className="text-center py-8 text-gray-500">
+							Este cliente no tiene historial de actividades
+						</div>
+					) : (
+						<Table>
+							<TableHeader>
+								<TableRow>
+									<TableHead>ID</TableHead>
+									<TableHead>Fecha</TableHead>
+									<TableHead>Acción</TableHead>
+									<TableHead>Estado</TableHead>
 								</TableRow>
-							))}
-						</TableBody>
-					</Table>
+							</TableHeader>
+							<TableBody>
+								{history.map((entry) => (
+									<TableRow key={entry.id}>
+										<TableCell className="font-medium">
+											{entry.id}
+										</TableCell>
+										<TableCell>{entry.date}</TableCell>
+										<TableCell>{entry.action}</TableCell>
+										<TableCell>
+											{entry.details?.status && getStatusBadge(entry.details.status)}
+										</TableCell>
+									</TableRow>
+								))}
+							</TableBody>
+						</Table>
+					)}
 				</CardContent>
 			</Card>
 		</div>
