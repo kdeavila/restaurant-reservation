@@ -84,7 +84,7 @@ export default function NewCustomerPage() {
 			<Card className="max-w-2xl">
 				<form
 					onSubmit={handleSubmit}
-					className="flex flex-col gap-6flex flex-col gap-6"
+					className="flex flex-col gap-6"
 				>
 					<CardHeader>
 						<CardTitle>Client Information</CardTitle>
@@ -137,7 +137,7 @@ export default function NewCustomerPage() {
 						<Button
 							variant="outline"
 							type="button"
-							onClick={() => router.push("/clientes")}
+							onClick={() => router.push("/dashb/clients")}
 						>
 							Cancel
 						</Button>
