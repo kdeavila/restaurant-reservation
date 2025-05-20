@@ -3,7 +3,8 @@ import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
   const user = request.cookies.get("user");
-  const isLoggedIn = !!user;
+  const token = request.cookies.get("auth_token");
+  const isLoggedIn = !!user && !!token;
 
   if (!isLoggedIn && request.nextUrl.pathname.startsWith("/dashboard")) {
     return NextResponse.redirect(new URL("/auth/login", request.url));

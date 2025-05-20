@@ -3,12 +3,11 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { setCookie, deleteCookie } from "cookies-next";
+import { setCookie, deleteCookie, getCookie } from "cookies-next";
 import { toast } from "@/hooks/use-toast";
+import { apiPost } from "@/lib/api";
 
-// URL de la API de Heroku
-const API_URL = "/api";
-const FIXED_PASSWORD = "admin123"; // Contraseña fija para todos los usuarios
+const ADMIN_API_URL = "https://powerful-thicket-20953-b0be64efe5ec.herokuapp.com";
 
 type User = {
   _id: string;
@@ -28,6 +27,16 @@ type AuthContextType = {
   error: string | null;
 };
 
+type LoginResponse = {
+  token?: string;
+  error?: string;
+};
+
+type LoginRequest = {
+  email: string;
+  password: string;
+};
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -36,15 +45,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  // Cargar usuario desde localStorage al inicio
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    if (storedUser) {
+    const token = getCookie("auth_token");
+    
+    if (storedUser && token) {
       try {
         setUser(JSON.parse(storedUser));
       } catch (e) {
         localStorage.removeItem("user");
         deleteCookie("user");
+        deleteCookie("auth_token");
       }
     }
   }, []);
@@ -54,39 +65,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setError(null);
     
     try {
-      // Verificar que la contraseña coincida con la contraseña fija
-      if (password !== FIXED_PASSWORD) {
-        throw new Error("Contraseña incorrecta");
+      const data = await apiPost<LoginRequest, LoginResponse>(
+        "/admin/login",
+        { email, password }
+      );
+      
+      if (data.error) {
+        throw new Error(data.error || "Error al iniciar sesión");
+      }
+      
+      const { token } = data;
+      
+      if (!token) {
+        throw new Error("No se recibió un token de autenticación");
       }
 
-      // Obtener todos los usuarios activos
-      const response = await fetch(`${API_URL}/user/getallactive`);
+      const tokenPayload = JSON.parse(atob(token.split('.')[1]));
       
-      if (!response.ok) {
-        throw new Error("Error al obtener usuarios");
-      }
+      const userData: User = {
+        _id: tokenPayload.id,
+        email: tokenPayload.email,
+        name: tokenPayload.name || "Administrador", 
+        role: "admin",
+        is_active: true
+      };
       
-      const users = await response.json();
+      setCookie("auth_token", token, { maxAge: 60 * 60 * 24 * 7 });
+      localStorage.setItem("user", JSON.stringify(userData));
+      setCookie("user", JSON.stringify(userData), { maxAge: 60 * 60 * 24 * 7 });
       
-      // Buscar el usuario por email
-      const foundUser = users.find((u: User) => u.email === email);
-      
-      if (!foundUser) {
-        throw new Error("Usuario no encontrado o inactivo");
-      }
-
-      if (!foundUser.is_active) {
-        throw new Error("Usuario inactivo");
-      }
-      
-      // Guardar el usuario en el estado y localStorage
-      setUser(foundUser);
-      localStorage.setItem("user", JSON.stringify(foundUser));
-      setCookie("user", JSON.stringify(foundUser), { maxAge: 60 * 60 * 24 * 7 }); // 1 semana
+      setUser(userData);
       
       toast({
         title: "Inicio de sesión exitoso",
-        description: `Bienvenido/a ${foundUser.name}`,
+        description: `Bienvenido/a ${userData.name}`,
       });
       
       router.push("/dashboard");
@@ -115,6 +127,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     localStorage.removeItem("user");
     deleteCookie("user");
+    deleteCookie("auth_token");
     toast({
       title: "Sesión cerrada",
       description: "Has cerrado sesión correctamente",
