@@ -1,4 +1,4 @@
-import { apiGet, apiPost, apiPut } from "@/lib/api";
+import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api";
 
 export interface HistoryItem {
   date: string;
@@ -34,19 +34,19 @@ export interface UpdateUserData {
   number?: string;
 }
 
-export async function getAllUsers(): Promise<User[]> {
+export async function getAllActiveUsers(): Promise<User[]> {
   try {
-    const users = await apiGet<User[]>('/user/getall');
+    const users = await apiGet<User[]>('/user/getallactive');
     return users;
   } catch (error) {
-    console.error("Error fetching users:", error);
+    console.error("Error fetching active users:", error);
     return [];
   }
 }
 
 export async function getUserById(id: string): Promise<User | null> {
   try {
-    const users = await getAllUsers();
+    const users = await getAllActiveUsers();
     const user = users.find(user => user._id === id);
     return user || null;
   } catch (error) {
@@ -116,6 +116,20 @@ export async function updateUser(id: string, userData: UpdateUserData): Promise<
     }
     
     console.error("Error updating user:", error);
+    throw new Error(errorMessage);
+  }
+}
+
+export async function softDeleteUser(id: string): Promise<void> {
+  try {
+    const endpoint = `/user/softdelete/${id}`;
+    await apiDelete(endpoint);
+  } catch (error) {
+    let errorMessage = "Error al eliminar el usuario";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    console.error("Error deleting user:", error);
     throw new Error(errorMessage);
   }
 }
