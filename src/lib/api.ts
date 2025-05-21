@@ -35,10 +35,36 @@ export async function fetchWithAuth(
   return response;
 }
 
+async function handleApiResponse<T>(response: Response): Promise<T> {
+  if (!response.ok) {
+    const errorText = await response.text();
+    let errorMessage = `Error ${response.status}: ${response.statusText}`;
+    
+    try {
+      const errorData = JSON.parse(errorText);
+      if (errorData.error) {
+        errorMessage = errorData.error;
+      }
+    } catch (e) {
+      if (errorText) {
+        errorMessage += ` - ${errorText.substring(0, 100)}...`;
+      }
+    }
+    
+    throw new Error(errorMessage);
+  }
+  
+  try {
+    return await response.json() as T;
+  } catch (error) {
+    throw new Error("Error al procesar la respuesta del servidor");
+  }
+}
+
 
 export async function apiGet<TResponse = unknown>(endpoint: string): Promise<TResponse> {
   const response = await fetchWithAuth(endpoint);
-  return await response.json();
+  return handleApiResponse<TResponse>(response);
 }
 
 
@@ -50,7 +76,7 @@ export async function apiPost<
     method: "POST",
     body: JSON.stringify(data),
   });
-  return await response.json();
+  return handleApiResponse<TResponse>(response);
 }
 
 
@@ -62,7 +88,7 @@ export async function apiPut<
     method: "PUT",
     body: JSON.stringify(data),
   });
-  return await response.json();
+  return handleApiResponse<TResponse>(response);
 }
 
 
@@ -70,5 +96,5 @@ export async function apiDelete<TResponse = unknown>(endpoint: string): Promise<
   const response = await fetchWithAuth(endpoint, {
     method: "DELETE",
   });
-  return await response.json();
+  return handleApiResponse<TResponse>(response);
 } 

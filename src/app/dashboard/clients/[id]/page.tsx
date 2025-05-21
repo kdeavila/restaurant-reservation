@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { getUserById } from "@/features/clients/services/client-service";
+import { getUserById, updateUser } from "@/features/clients/services/client-service";
 import { Button } from "@/ui/button";
 import {
 	Card,
@@ -32,6 +32,7 @@ export default function EditCustomerPage() {
 	});
 
 	const [loading, setLoading] = useState(true);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [errors, setErrors] = useState({
 		name: "",
@@ -69,7 +70,6 @@ export default function EditCustomerPage() {
 		const { name, value } = e.target;
 		setFormData((prev) => ({ ...prev, [name]: value }));
 
-		// Limpiar errores al editar
 		if (errors[name as keyof typeof errors]) {
 			setErrors((prev) => ({ ...prev, [name]: "" }));
 		}
@@ -96,17 +96,39 @@ export default function EditCustomerPage() {
 		return valid;
 	};
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
 		if (validateForm()) {
-			// En una implementación real, aquí enviaríamos los datos al servidor
-			// Por ahora, solo mostraremos un mensaje de éxito
-			toast({
-				title: "Cambios guardados",
-				description: "Los datos del cliente han sido actualizados",
-			});
-			router.push("/dashboard/clients");
+			try {
+				setIsSubmitting(true);
+				const updatedUser = await updateUser(customerId, {
+					name: formData.name,
+					email: formData.email,
+					number: formData.number
+				});
+				
+				if (updatedUser?._id) {
+					toast({
+						title: "Cliente actualizado",
+						description: "Los datos del cliente han sido actualizados correctamente",
+					});
+					router.push("/dashboard/clients");
+				}
+			} catch (error) {
+				let errorMessage = "Error al actualizar el cliente";
+				if (error instanceof Error) {
+					errorMessage = error.message;
+				}
+				toast({
+					title: "Error",
+					description: errorMessage,
+					variant: "destructive"
+				});
+				console.error("Error updating client:", error);
+			} finally {
+				setIsSubmitting(false);
+			}
 		}
 	};
 
@@ -138,13 +160,13 @@ export default function EditCustomerPage() {
 			</div>
 
 			<Card className="max-w-2xl">
-				<form onSubmit={handleSubmit}>
+				<form onSubmit={handleSubmit} className="flex flex-col gap-4">
 					<CardHeader>
 						<CardTitle>Edit Client</CardTitle>
 						<CardDescription>Update the client's information.</CardDescription>
 					</CardHeader>
-					<CardContent className="space-y-4">
-						<div className="space-y-2">
+					<CardContent className="space-y-6 pt-2">
+						<div className="space-y-3">
 							<Label htmlFor="name">Name *</Label>
 							<Input
 								id="name"
@@ -152,13 +174,14 @@ export default function EditCustomerPage() {
 								value={formData.name}
 								onChange={handleChange}
 								placeholder="Name and surnames"
+								disabled={isSubmitting}
 							/>
 							{errors.name && (
 								<p className="text-sm text-red-500">{errors.name}</p>
 							)}
 						</div>
 
-						<div className="space-y-2">
+						<div className="space-y-3">
 							<Label htmlFor="email">Email *</Label>
 							<Input
 								id="email"
@@ -167,13 +190,14 @@ export default function EditCustomerPage() {
 								value={formData.email}
 								onChange={handleChange}
 								placeholder="example@example.com"
+								disabled={isSubmitting}
 							/>
 							{errors.email && (
 								<p className="text-sm text-red-500">{errors.email}</p>
 							)}
 						</div>
 
-						<div className="space-y-2">
+						<div className="space-y-3">
 							<Label htmlFor="number">Phone number (optional)</Label>
 							<Input
 								id="number"
@@ -181,25 +205,48 @@ export default function EditCustomerPage() {
 								value={formData.number}
 								onChange={handleChange}
 								placeholder="612345678"
+								disabled={isSubmitting}
 							/>
 						</div>
 					</CardContent>
 					<CardFooter className="flex justify-between">
-						<div className="flex gap-2">
+						<div className="flex gap-3">
 							<Button
 								variant="outline"
 								type="button"
 								onClick={() => router.push("/dashboard/clients")}
+								disabled={isSubmitting}
 							>
 								Cancel
 							</Button>
 							<Link href={`/dashboard/clients/${customerId}/history`}>
-								<Button variant="outline">History</Button>
+								<Button variant="outline" disabled={isSubmitting}>History</Button>
 							</Link>
 						</div>
-						<Button type="submit">
-							<Save className="mr-2 h-4 w-4" />
-							Save Changes
+						<Button type="submit" disabled={isSubmitting}>
+							{isSubmitting ? (
+								<>
+									<svg 
+										className="mr-2 h-4 w-4 animate-spin" 
+										viewBox="0 0 24 24"
+										aria-label="Cargando..."
+									>
+										<title>Cargando...</title>
+										<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+										<path
+											className="opacity-75"
+											fill="currentColor"
+											d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+										/>
+									</svg>
+									Actualizando...
+								</>
+							) : (
+								<>
+									<Save className="mr-2 h-4 w-4" />
+									Save Changes
+								</>
+							)}
 						</Button>
 					</CardFooter>
 				</form>

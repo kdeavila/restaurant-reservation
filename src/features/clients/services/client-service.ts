@@ -1,4 +1,4 @@
-import { apiGet, apiPost } from "@/lib/api";
+import { apiGet, apiPost, apiPut } from "@/lib/api";
 
 export interface HistoryItem {
   date: string;
@@ -25,6 +25,12 @@ export interface CustomerTableData {
 export interface CreateUserData {
   name: string;
   email: string;
+  number?: string;
+}
+
+export interface UpdateUserData {
+  name?: string;
+  email?: string;
   number?: string;
 }
 
@@ -59,19 +65,16 @@ export async function createUser(userData: CreateUserData): Promise<User> {
     
     const response = await apiPost<typeof data, User | { error: string }>('/user/create', data);
     
-    // Si la respuesta tiene un campo de error, lanzar una excepción
     if ('error' in response) {
       throw new Error(response.error);
     }
     
-    // Si la respuesta no contiene un _id, también es un error
     if (!('_id' in response)) {
       throw new Error("Formato de respuesta inesperado");
     }
     
     return response as User;
   } catch (error) {
-    // Procesar los mensajes de error comunes para mostrar mensajes más amigables
     let errorMessage = "Error al crear el usuario";
     
     if (error instanceof Error) {
@@ -83,6 +86,36 @@ export async function createUser(userData: CreateUserData): Promise<User> {
     }
     
     console.error("Error creating user:", error);
+    throw new Error(errorMessage);
+  }
+}
+
+export async function updateUser(id: string, userData: UpdateUserData): Promise<User> {
+  try {
+    const endpoint = `/user/update/${id}`;
+    const response = await apiPut<UpdateUserData, User | { error: string }>(endpoint, userData);
+    
+    if ('error' in response) {
+      throw new Error(response.error);
+    }
+    
+    if (!('_id' in response)) {
+      throw new Error("Formato de respuesta inesperado");
+    }
+    
+    return response as User;
+  } catch (error) {
+    let errorMessage = "Error al actualizar el usuario";
+    
+    if (error instanceof Error) {
+      if (error.message.includes("duplicate key error") && error.message.includes("email")) {
+        errorMessage = "Ya existe un usuario con este email";
+      } else {
+        errorMessage = error.message.split("->").pop()?.trim() || error.message;
+      }
+    }
+    
+    console.error("Error updating user:", error);
     throw new Error(errorMessage);
   }
 }
