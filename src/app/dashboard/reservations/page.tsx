@@ -6,9 +6,10 @@ import { Input } from "@/ui/input"
 import { PlusCircle } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 
-export default function ReservationsPage() {
+// Componente que utiliza useSearchParams
+function ReservationsContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const date = searchParams?.get("date") || new Date().toISOString().split("T")[0]
@@ -60,5 +61,14 @@ export default function ReservationsPage() {
 
       <ReservationCalendar query={currentQuery} date={date} />
     </div>
+  )
+}
+
+// Componente principal que envuelve el contenido en Suspense
+export default function ReservationsPage() {
+  return (
+    <Suspense fallback={<div>Loading reservations...</div>}>
+      <ReservationsContent />
+    </Suspense>
   )
 }

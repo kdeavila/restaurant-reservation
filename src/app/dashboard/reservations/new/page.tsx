@@ -20,11 +20,12 @@ import { Label } from "@/ui/label"
 import { ArrowLeft, Save, Users } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { createReservation } from "@/features/reservations/services/reservations.service"
 import { toast } from "@/hooks/use-toast"
 
-export default function NewReservationPage() {
+// Componente que utiliza useSearchParams
+function NewReservationContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const preselectedTable = searchParams.get("table") || ""
@@ -189,5 +190,14 @@ export default function NewReservationPage() {
         </form>
       </Card>
     </div>
+  )
+}
+
+// Componente principal que envuelve el contenido en Suspense
+export default function NewReservationPage() {
+  return (
+    <Suspense fallback={<div>Loading new reservation form...</div>}>
+      <NewReservationContent />
+    </Suspense>
   )
 }

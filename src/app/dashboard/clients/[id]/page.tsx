@@ -105,7 +105,7 @@ export default function EditCustomerPage() {
 		if (validateForm()) {
 			try {
 				setIsSubmitting(true);
-				const updatedUser = await updateCustomer(customerId, {
+				const updatedUser = await updateCustomer(Number(customerId), {
 					name: formData.name,
 					email: formData.email,
 					phone: formData.phone,
