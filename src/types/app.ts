@@ -55,8 +55,20 @@ export interface Reservation {
 
 // ==================== Reservation with relationships ====================
 export interface ReservationDetails extends Reservation {
-  customer: Customer;
-  table: Table;
+  Customer: Customer;
+  Table: Table;
+}
+
+export interface ReservationTableData {
+  id: number;
+  client: string;
+  customer_id: number;
+  table_id: number;
+  table: TableLocation;
+  date: string;
+  time: string;
+  people: number;
+  status: ReservationStatus;
 }
 
 // ==================== Login ====================

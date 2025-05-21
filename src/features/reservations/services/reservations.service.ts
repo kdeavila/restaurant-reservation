@@ -1,9 +1,9 @@
 import { apiDelete, apiGet, apiPost, apiPut } from "@/lib/api";
-import type { CreateReservationDTO, Reservation, UpdateReservationDTO } from "@/types/app";
+import type { CreateReservationDTO, Reservation, ReservationDetails, ReservationTableData, UpdateReservationDTO } from "@/types/app";
 
-export async function getReservations(): Promise<Reservation[]> {
+export async function getReservations(): Promise<ReservationDetails[]> {
   try {
-    const reservations = await apiGet<Reservation[]>("/reservations");
+    const reservations = await apiGet<ReservationDetails[]>("/reservations");
     return reservations;
   } catch (error) {
     console.error("Error fetching reservations:", error);
@@ -11,7 +11,7 @@ export async function getReservations(): Promise<Reservation[]> {
   }
 }
 
-export async function getReservation(id: number): Promise<Reservation | null> {
+export async function getReservation(id: number): Promise<ReservationDetails | null> {
   try {
     const reservations = await getReservations();
     const reservation = reservations.find((r) => r.id_reservation === id);
@@ -22,16 +22,16 @@ export async function getReservation(id: number): Promise<Reservation | null> {
   }
 }
 
-export async function createReservation(reservationData: CreateReservationDTO): Promise<Reservation> {
+export async function createReservation(reservationData: CreateReservationDTO): Promise<ReservationDetails> {
   try {
-    const response = await apiPost<CreateReservationDTO, Reservation | { error: string }>(
+    const response = await apiPost<CreateReservationDTO, ReservationDetails | { error: string }>(
       "/reservations",
       reservationData
     );
     if ("error" in response) {
       throw new Error(response.error);
     }
-    return response as Reservation;
+    return response as ReservationDetails;
   } catch (error) {
     let errorMessage = "Error creating reservation";
     if (error instanceof Error) {
@@ -45,17 +45,17 @@ export async function createReservation(reservationData: CreateReservationDTO): 
 export async function updateReservation(
   id: number,
   reservationData: UpdateReservationDTO
-): Promise<Reservation> {
+): Promise<ReservationDetails> {
   try {
     const endpoint = `/reservations/${id}`;
-    const response = await apiPut<UpdateReservationDTO, Reservation | { error: string }>(
+    const response = await apiPut<UpdateReservationDTO, ReservationDetails | { error: string }>(
       endpoint,
       reservationData
     );
     if ("error" in response) {
       throw new Error(response.error);
     }
-    return response as Reservation;
+    return response as ReservationDetails;
   } catch (error) {
     let errorMessage = "Error updating reservation";
     if (error instanceof Error) {
@@ -80,11 +80,16 @@ export async function deleteReservation(id: number): Promise<void> {
   }
 }
 
-export function customersAdapter(users: Reservation[]): CustomerTableData[] {
-  return users.map((user) => ({
-    id: user.id_customer,
-    name: user.name,
-    email: user.email,
-    phone: user.phone || "N/A"
+export function reservationsAdapter(reservations: ReservationDetails[]): ReservationTableData[] {
+  return reservations.map((reservation) => ({
+    id: reservation.id_reservation,
+    client: reservation.Customer.name,
+    customer_id: reservation.Customer.id_customer,
+    table_id: reservation.table_id,
+    date: reservation.date,
+    time: reservation.time,
+    people: reservation.people,
+    table: reservation.Table.location,
+    status: reservation.status,
   }));
 }
