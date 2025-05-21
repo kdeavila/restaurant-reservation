@@ -49,7 +49,8 @@ async function handleApiResponse<T>(response: Response): Promise<T> {
 			}
 		}
 
-		throw new Error(errorMessage);
+		const error = new Error(errorMessage);
+		return error as T;
 	}
 
 	try {

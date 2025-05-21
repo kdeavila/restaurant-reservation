@@ -4,13 +4,49 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/ui/button";
 import { Calendar } from "@/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/ui/popover";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
 import { enUS } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 import * as React from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 
 export function DatePicker() {
-	const [date, setDate] = React.useState<Date | undefined>(new Date());
+	const searchParams = useSearchParams();
+	const router = useRouter();
+	const dateParam = searchParams.get('date');
+
+	const [date, setDate] = React.useState<Date>(() => {
+		if (dateParam) {
+			try {
+				const parsedDate = parse(dateParam, 'yyyy-MM-dd', new Date());
+				if (Number.isNaN(parsedDate.getTime())) {
+					return new Date();
+				}
+				return parsedDate;
+			} catch {
+				return new Date();
+			}
+		}
+		return new Date();
+	});
+
+	const updateUrlWithDate = React.useCallback((newDate: Date) => {
+		const params = new URLSearchParams(searchParams.toString());
+		params.set('date', format(newDate, 'yyyy-MM-dd'));
+		router.push(`?${params.toString()}`);
+	}, [searchParams, router]);
+
+	React.useEffect(() => {
+		if (!dateParam) {
+			updateUrlWithDate(date);
+		}
+	}, [date, dateParam, updateUrlWithDate]);
+
+	const handleDateSelect = (newDate: Date | undefined) => {
+		if (!newDate || Number.isNaN(newDate.getTime())) return;
+		setDate(newDate);
+		updateUrlWithDate(newDate);
+	};
 
 	return (
 		<Popover>
@@ -34,7 +70,7 @@ export function DatePicker() {
 				<Calendar
 					mode="single"
 					selected={date}
-					onSelect={setDate}
+					onSelect={handleDateSelect}
 					initialFocus
 					locale={enUS}
 				/>
