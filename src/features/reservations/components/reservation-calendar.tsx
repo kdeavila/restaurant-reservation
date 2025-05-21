@@ -141,7 +141,7 @@ export function ReservationCalendar({ date, query }: Props) {
             <TableHead>Date</TableHead>
             <TableHead>Time</TableHead>
             <TableHead>People</TableHead>
-            <TableHead>Location</TableHead>
+            <TableHead>Table</TableHead>
             <TableHead>Status</TableHead>
             <TableHead className="w-[100px]">Actions</TableHead>
           </TableRow>
@@ -161,7 +161,14 @@ export function ReservationCalendar({ date, query }: Props) {
                 <TableCell>{reservation.date}</TableCell>
                 <TableCell>{reservation.time}</TableCell>
                 <TableCell>{reservation.people}</TableCell>
-                <TableCell>{reservation.table}</TableCell>
+                <TableCell>
+                  Table {reservation.table_id}
+                  {reservation.tableCapacity && (
+                    <span className="text-xs text-muted-foreground ml-1">
+                      (capacity: {reservation.tableCapacity})
+                    </span>
+                  )}
+                </TableCell>
                 <TableCell>
                   <Badge
                     variant={

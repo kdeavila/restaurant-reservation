@@ -90,6 +90,7 @@ export function reservationsAdapter(reservations: ReservationDetails[]): Reserva
     time: reservation.time,
     people: reservation.people,
     table: reservation.Table.location,
+    tableCapacity: reservation.Table.capacity,
     status: reservation.status,
   }));
 }

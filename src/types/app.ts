@@ -65,6 +65,7 @@ export interface ReservationTableData {
   customer_id: number;
   table_id: number;
   table: TableLocation;
+  tableCapacity?: number;
   date: string;
   time: string;
   people: number;
