@@ -71,8 +71,8 @@ export function Sidebar() {
 				))}
 			</div>
 			<div className="p-4 border-t">
-				<Button 
-					variant="outline" 
+				<Button
+					variant="outline"
 					className="w-full justify-start"
 					onClick={logout}
 				>

@@ -66,7 +66,9 @@ export function UserDropdown() {
 								</DialogDescription>
 							</DialogHeader>
 							<DialogFooter>
-								<Button variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
+								<Button variant="outline" onClick={() => setIsOpen(false)}>
+									Cancel
+								</Button>
 								<Button onClick={handleLogout}>Logout</Button>
 							</DialogFooter>
 						</DialogContent>

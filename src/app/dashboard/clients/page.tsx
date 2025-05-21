@@ -1,10 +1,19 @@
+"use client";
+
 import { CustomerTable } from "@/features/clients/components/customer-table";
 import { Button } from "@/ui/button";
 import { Input } from "@/ui/input";
 import { PlusCircle } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function CustomersPage() {
+	const [currentQuery, setCurrentQuery] = useState("");
+
+	const handleSearch = (query: string) => {
+		setCurrentQuery(query);
+	};
+
 	return (
 		<div className="space-y-6">
 			<div className="flex items-center justify-between">
@@ -18,11 +27,15 @@ export default function CustomersPage() {
 			</div>
 
 			<div className="flex items-center gap-2">
-				<Input placeholder="Search clients..." className="max-w-sm" />
-				<Button variant="outline">Search</Button>
+				<Input
+					placeholder="Search clients..."
+					className="max-w-sm"
+					value={currentQuery}
+					onChange={(e) => handleSearch(e.target.value)}
+				/>
 			</div>
 
-			<CustomerTable />
+			<CustomerTable searchQuery={currentQuery} />
 		</div>
 	);
 }

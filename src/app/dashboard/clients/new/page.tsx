@@ -2,6 +2,8 @@
 
 import type React from "react";
 
+import { createCustomer } from "@/features/clients/services/client-service";
+import { toast } from "@/hooks/use-toast";
 import { Button } from "@/ui/button";
 import {
 	Card,
@@ -25,6 +27,7 @@ export default function NewCustomerPage() {
 		email: "",
 		phone: "",
 	});
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const [errors, setErrors] = useState({
 		name: "",
@@ -62,11 +65,40 @@ export default function NewCustomerPage() {
 		return valid;
 	};
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
 		if (validateForm()) {
-			router.push("/clients");
+			try {
+				setIsSubmitting(true);
+				const newUser = await createCustomer({
+					name: formData.name,
+					email: formData.email,
+					phone: formData.phone,
+				});
+
+				// Verificar que el usuario se creó correctamente
+				if (newUser?.id_customer) {
+					toast({
+						title: "User created",
+						description: "The user has been successfully registered",
+						variant: "default",
+					});
+					router.push("/dashboard/clients");
+				}
+			} catch (error) {
+				let errorMessage = "Error al crear el usuario";
+				if (error instanceof Error) {
+					errorMessage = error.message;
+				}
+				toast({
+					title: "Error",
+					description: errorMessage,
+					variant: "destructive",
+				});
+			} finally {
+				setIsSubmitting(false);
+			}
 		}
 	};
 
@@ -82,10 +114,7 @@ export default function NewCustomerPage() {
 			</div>
 
 			<Card className="max-w-2xl">
-				<form
-					onSubmit={handleSubmit}
-					className="flex flex-col gap-6"
-				>
+				<form onSubmit={handleSubmit} className="flex flex-col gap-6">
 					<CardHeader>
 						<CardTitle>Client Information</CardTitle>
 						<CardDescription>
@@ -101,6 +130,7 @@ export default function NewCustomerPage() {
 								value={formData.name}
 								onChange={handleChange}
 								placeholder="Full name"
+								disabled={isSubmitting}
 							/>
 							{errors.name && (
 								<p className="text-sm text-red-500">{errors.name}</p>
@@ -116,6 +146,7 @@ export default function NewCustomerPage() {
 								value={formData.email}
 								onChange={handleChange}
 								placeholder="example@example.com"
+								disabled={isSubmitting}
 							/>
 							{errors.email && (
 								<p className="text-sm text-red-500">{errors.email}</p>
@@ -123,13 +154,14 @@ export default function NewCustomerPage() {
 						</div>
 
 						<div className="space-y-2">
-							<Label htmlFor="phone">Phone (optional)</Label>
+							<Label htmlFor="phone">Phone number (optional)</Label>
 							<Input
 								id="phone"
 								name="phone"
 								value={formData.phone}
 								onChange={handleChange}
-								placeholder="612345678"
+								placeholder="+573201234567"
+								disabled={isSubmitting}
 							/>
 						</div>
 					</CardContent>
@@ -137,13 +169,43 @@ export default function NewCustomerPage() {
 						<Button
 							variant="outline"
 							type="button"
-							onClick={() => router.push("/dashb/clients")}
+							onClick={() => router.push("/dashboard/clients")}
+							disabled={isSubmitting}
 						>
 							Cancel
 						</Button>
-						<Button type="submit">
-							<Save className="mr-2 h-4 w-4" />
-							Save Client
+						<Button type="submit" disabled={isSubmitting}>
+							{isSubmitting ? (
+								<>
+									<svg
+										className="mr-2 h-4 w-4 animate-spin"
+										viewBox="0 0 24 24"
+										aria-label="Cargando..."
+									>
+										<title>Cargando...</title>
+										<circle
+											className="opacity-25"
+											cx="12"
+											cy="12"
+											r="10"
+											stroke="currentColor"
+											strokeWidth="4"
+											fill="none"
+										/>
+										<path
+											className="opacity-75"
+											fill="currentColor"
+											d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+										/>
+									</svg>
+									Creando...
+								</>
+							) : (
+								<>
+									<Save className="mr-2 h-4 w-4" />
+									Save Client
+								</>
+							)}
 						</Button>
 					</CardFooter>
 				</form>

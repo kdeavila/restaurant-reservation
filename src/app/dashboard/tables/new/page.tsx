@@ -24,12 +24,14 @@ import { ArrowLeft, Save } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { createTable } from "@/features/tables/services/tables.service";
+import type { CreateTableDTO, Table } from "@/types/app";
 
 export default function NewTablePage() {
 	const router = useRouter();
-	const [formData, setFormData] = useState({
-		capacity: "4",
-		location: "",
+	const [formData, setFormData] = useState<CreateTableDTO>({
+		capacity: 4,
+		location: "indoor",
 	});
 
 	const [errors, setErrors] = useState({
@@ -61,12 +63,12 @@ export default function NewTablePage() {
 		const newErrors = { capacity: "", location: "" };
 
 		if (!formData.capacity) {
-			newErrors.capacity = "La capacidad es obligatoria";
+			newErrors.capacity = "Capacity is required";
 			valid = false;
 		}
 
 		if (!formData.location) {
-			newErrors.location = "La ubicación es obligatoria";
+			newErrors.location = "Location is required";
 			valid = false;
 		}
 
@@ -74,11 +76,12 @@ export default function NewTablePage() {
 		return valid;
 	};
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
 		if (validateForm()) {
 			// En una aplicación real, aquí se enviarían los datos al servidor
+			createTable(formData)
 			console.log("New table data:", formData);
 
 			// Redirect to tables list
@@ -89,7 +92,7 @@ export default function NewTablePage() {
 	return (
 		<div className="space-y-6">
 			<div className="flex items-center gap-2">
-				<Link href="/tables">
+				<Link href="/dashboard/tables">
 					<Button variant="outline" size="icon">
 						<ArrowLeft className="h-4 w-4" />
 					</Button>
@@ -98,7 +101,7 @@ export default function NewTablePage() {
 			</div>
 
 			<Card className="max-w-2xl">
-				<form onSubmit={handleSubmit}>
+				<form onSubmit={handleSubmit} className="space-y-4">
 					<CardHeader>
 						<CardTitle>Table Information</CardTitle>
 						<CardDescription>
@@ -135,7 +138,7 @@ export default function NewTablePage() {
 									<SelectItem value="window">Window</SelectItem>
 									<SelectItem value="terrace">Terrace</SelectItem>
 									<SelectItem value="indoor">Indoor</SelectItem>
-									<SelectItem value="bar">Bar</SelectItem>
+									<SelectItem value="vip room">VIP Room</SelectItem>
 								</SelectContent>
 							</Select>
 							{errors.location && (
