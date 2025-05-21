@@ -110,7 +110,7 @@ export async function deleteCustomer(id: number): Promise<void> {
 
 export async function getCustomerHistory(id: number): Promise<ReservationDetails[]> {
 	try {
-		const endpoint = `/user/history/${id}`;
+		const endpoint = `/customers/${id}/reservations`;
 		const history = await apiGet<ReservationDetails[]>(endpoint);
 		return history;
 	} catch (error) {

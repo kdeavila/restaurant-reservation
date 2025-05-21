@@ -155,7 +155,7 @@ export default function CustomerHistoryPage() {
               <TableBody>
                 {history.length > 0 ? (
                   history.map((entry) => (
-                    <TableRow key={entry.customer_id}>
+                    <TableRow key={entry.id_reservation}>
                       <TableCell className="font-medium">
                         {entry.customer_id}
                       </TableCell>
