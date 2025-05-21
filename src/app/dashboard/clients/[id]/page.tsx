@@ -2,7 +2,11 @@
 
 import type React from "react";
 
-import { getUserById, updateUser } from "@/features/clients/services/client-service";
+import {
+	getUserById,
+	updateUser,
+} from "@/features/clients/services/client-service";
+import { toast } from "@/hooks/use-toast";
 import { Button } from "@/ui/button";
 import {
 	Card,
@@ -14,7 +18,6 @@ import {
 } from "@/ui/card";
 import { Input } from "@/ui/input";
 import { Label } from "@/ui/label";
-import { toast } from "@/hooks/use-toast";
 import { ArrowLeft, Save } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -44,12 +47,12 @@ export default function EditCustomerPage() {
 			try {
 				setLoading(true);
 				const userData = await getUserById(customerId);
-				
+
 				if (!userData) {
 					setError("Cliente no encontrado");
 					return;
 				}
-				
+
 				setFormData({
 					name: userData.name,
 					email: userData.email,
@@ -62,7 +65,7 @@ export default function EditCustomerPage() {
 				setLoading(false);
 			}
 		};
-		
+
 		fetchCustomerData();
 	}, [customerId]);
 
@@ -105,13 +108,14 @@ export default function EditCustomerPage() {
 				const updatedUser = await updateUser(customerId, {
 					name: formData.name,
 					email: formData.email,
-					number: formData.number
+					number: formData.number,
 				});
-				
+
 				if (updatedUser?._id) {
 					toast({
 						title: "Cliente actualizado",
-						description: "Los datos del cliente han sido actualizados correctamente",
+						description:
+							"Los datos del cliente han sido actualizados correctamente",
 					});
 					router.push("/dashboard/clients");
 				}
@@ -123,7 +127,7 @@ export default function EditCustomerPage() {
 				toast({
 					title: "Error",
 					description: errorMessage,
-					variant: "destructive"
+					variant: "destructive",
 				});
 				console.error("Error updating client:", error);
 			} finally {
@@ -220,19 +224,29 @@ export default function EditCustomerPage() {
 								Cancel
 							</Button>
 							<Link href={`/dashboard/clients/${customerId}/history`}>
-								<Button variant="outline" disabled={isSubmitting}>History</Button>
+								<Button variant="outline" disabled={isSubmitting}>
+									History
+								</Button>
 							</Link>
 						</div>
 						<Button type="submit" disabled={isSubmitting}>
 							{isSubmitting ? (
 								<>
-									<svg 
-										className="mr-2 h-4 w-4 animate-spin" 
+									<svg
+										className="mr-2 h-4 w-4 animate-spin"
 										viewBox="0 0 24 24"
 										aria-label="Cargando..."
 									>
 										<title>Cargando...</title>
-										<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+										<circle
+											className="opacity-25"
+											cx="12"
+											cy="12"
+											r="10"
+											stroke="currentColor"
+											strokeWidth="4"
+											fill="none"
+										/>
 										<path
 											className="opacity-75"
 											fill="currentColor"

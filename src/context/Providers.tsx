@@ -11,9 +11,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 			enableSystem
 			disableTransitionOnChange
 		>
-			<AuthProvider>
-				{children}
-			</AuthProvider>
+			<AuthProvider>{children}</AuthProvider>
 		</ThemeProvider>
 	);
 }

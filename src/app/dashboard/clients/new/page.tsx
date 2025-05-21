@@ -3,6 +3,7 @@
 import type React from "react";
 
 import { createUser } from "@/features/clients/services/client-service";
+import { toast } from "@/hooks/use-toast";
 import { Button } from "@/ui/button";
 import {
 	Card,
@@ -14,7 +15,6 @@ import {
 } from "@/ui/card";
 import { Input } from "@/ui/input";
 import { Label } from "@/ui/label";
-import { toast } from "@/hooks/use-toast";
 import { ArrowLeft, Save } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -74,7 +74,7 @@ export default function NewCustomerPage() {
 				const newUser = await createUser({
 					name: formData.name,
 					email: formData.email,
-					number: formData.number
+					number: formData.number,
 				});
 
 				// Verificar que el usuario se creó correctamente
@@ -82,7 +82,7 @@ export default function NewCustomerPage() {
 					toast({
 						title: "Usuario creado",
 						description: "El usuario ha sido registrado exitosamente",
-						variant: "default"
+						variant: "default",
 					});
 					router.push("/dashboard/clients");
 				}
@@ -94,7 +94,7 @@ export default function NewCustomerPage() {
 				toast({
 					title: "Error",
 					description: errorMessage,
-					variant: "destructive"
+					variant: "destructive",
 				});
 			} finally {
 				setIsSubmitting(false);
@@ -114,10 +114,7 @@ export default function NewCustomerPage() {
 			</div>
 
 			<Card className="max-w-2xl">
-				<form
-					onSubmit={handleSubmit}
-					className="flex flex-col gap-6"
-				>
+				<form onSubmit={handleSubmit} className="flex flex-col gap-6">
 					<CardHeader>
 						<CardTitle>Client Information</CardTitle>
 						<CardDescription>
@@ -180,13 +177,21 @@ export default function NewCustomerPage() {
 						<Button type="submit" disabled={isSubmitting}>
 							{isSubmitting ? (
 								<>
-									<svg 
-										className="mr-2 h-4 w-4 animate-spin" 
+									<svg
+										className="mr-2 h-4 w-4 animate-spin"
 										viewBox="0 0 24 24"
 										aria-label="Cargando..."
 									>
 										<title>Cargando...</title>
-										<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+										<circle
+											className="opacity-25"
+											cx="12"
+											cy="12"
+											r="10"
+											stroke="currentColor"
+											strokeWidth="4"
+											fill="none"
+										/>
 										<path
 											className="opacity-75"
 											fill="currentColor"

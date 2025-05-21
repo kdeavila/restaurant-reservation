@@ -45,7 +45,7 @@ export default function CustomerHistoryPage() {
 		email: string;
 		number: string;
 	} | null>(null);
-	
+
 	const [history, setHistory] = useState<HistoryEntry[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -55,29 +55,31 @@ export default function CustomerHistoryPage() {
 			try {
 				setLoading(true);
 				const userData = await getUserById(customerId);
-				
+
 				if (!userData) {
 					setError("Cliente no encontrado");
 					return;
 				}
-				
+
 				setCustomer({
 					id: userData._id,
 					name: userData.name,
 					email: userData.email,
 					number: userData.number || "N/A",
 				});
-				
+
 				// Convertir el historial a un formato más útil para mostrar
-				const formattedHistory: HistoryEntry[] = userData.history.map((item, index) => ({
-					id: `ACT-${index + 1}`.padStart(7, '0'),
-					date: new Date(item.date).toLocaleDateString(),
-					action: item.action,
-					details: {
-						status: "completed"
-					}
-				}));
-				
+				const formattedHistory: HistoryEntry[] = userData.history.map(
+					(item, index) => ({
+						id: `ACT-${index + 1}`.padStart(7, "0"),
+						date: new Date(item.date).toLocaleDateString(),
+						action: item.action,
+						details: {
+							status: "completed",
+						},
+					}),
+				);
+
 				setHistory(formattedHistory);
 			} catch (err) {
 				console.error("Error fetching customer data:", err);
@@ -86,7 +88,7 @@ export default function CustomerHistoryPage() {
 				setLoading(false);
 			}
 		};
-		
+
 		fetchCustomerData();
 	}, [customerId]);
 
@@ -187,13 +189,12 @@ export default function CustomerHistoryPage() {
 							<TableBody>
 								{history.map((entry) => (
 									<TableRow key={entry.id}>
-										<TableCell className="font-medium">
-											{entry.id}
-										</TableCell>
+										<TableCell className="font-medium">{entry.id}</TableCell>
 										<TableCell>{entry.date}</TableCell>
 										<TableCell>{entry.action}</TableCell>
 										<TableCell>
-											{entry.details?.status && getStatusBadge(entry.details.status)}
+											{entry.details?.status &&
+												getStatusBadge(entry.details.status)}
 										</TableCell>
 									</TableRow>
 								))}

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { CustomerTable } from "@/features/clients/components/customer-table";
 import { Button } from "@/ui/button";
@@ -28,14 +28,16 @@ export default function CustomersPage() {
 			</div>
 
 			<div className="flex items-center gap-2">
-				<Input 
-					placeholder="Search clients..." 
-					className="max-w-sm" 
+				<Input
+					placeholder="Search clients..."
+					className="max-w-sm"
 					value={searchQuery}
 					onChange={(e) => setSearchQuery(e.target.value)}
 					onKeyPress={(e) => e.key === "Enter" && handleSearch()}
 				/>
-				<Button variant="outline" onClick={handleSearch}>Search</Button>
+				<Button variant="outline" onClick={handleSearch}>
+					Search
+				</Button>
 			</div>
 
 			<CustomerTable searchQuery={currentQuery} />
