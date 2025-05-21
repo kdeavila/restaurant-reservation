@@ -38,12 +38,7 @@ export function Sidebar() {
 			href: "/dashboard/tables",
 			label: "Tables",
 			icon: Table2,
-		},
-		{
-			href: "/dashboard/notifications",
-			label: "Notifications",
-			icon: Mail,
-		},
+		}
 	];
 
 	return (
