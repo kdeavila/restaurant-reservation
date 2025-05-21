@@ -1,208 +1,183 @@
-"use client";
+"use client"
 
-import { getUserById } from "@/features/clients/services/client-service";
-import { Badge } from "@/ui/badge";
-import { Button } from "@/ui/button";
 import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/ui/card";
+  getCustomer,
+  getCustomerHistory,
+} from "@/features/clients/services/client-service"
+import type { Customer, Reservation } from "@/types/app"
+import { Badge } from "@/ui/badge"
+import { Button } from "@/ui/button"
 import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "@/ui/table";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
-
-interface HistoryEntry {
-	id: string;
-	date: string;
-	action: string;
-	details?: {
-		time?: string;
-		people?: number;
-		table?: number;
-		status?: string;
-	};
-}
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/ui/card"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/ui/table"
+import { ArrowLeft } from "lucide-react"
+import Link from "next/link"
+import { useParams } from "next/navigation"
+import { useEffect, useState } from "react"
 
 export default function CustomerHistoryPage() {
-	const params = useParams();
-	const customerId = params.id as string;
+  const params = useParams()
+  const customerId = params.id as string
 
-	const [customer, setCustomer] = useState<{
-		id: string;
-		name: string;
-		email: string;
-		number: string;
-	} | null>(null);
+  const [customer, setCustomer] = useState<Customer | null>(null)
+  const [history, setHistory] = useState<Reservation[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-	const [history, setHistory] = useState<HistoryEntry[]>([]);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    const fetchCustomerData = async () => {
+      try {
+        setLoading(true)
+        const customer = await getCustomer(Number(customerId))
+        if (customer instanceof Error || !customer) {
+          throw new Error("Cliente no encontrado")
+        }
+        const customerHistory = await getCustomerHistory(Number(customerId))
+        setCustomer(customer)
+        setHistory(customerHistory)
+      } catch (err) {
+        console.error("Error fetching customer data:", err)
+        setError("Failed to load customer data")
+      } finally {
+        setLoading(false)
+      }
+    }
 
-	useEffect(() => {
-		const fetchCustomerData = async () => {
-			try {
-				setLoading(true);
-				const userData = await getUserById(customerId);
+    fetchCustomerData()
+  }, [customerId])
 
-				if (!userData) {
-					setError("Cliente no encontrado");
-					return;
-				}
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "confirmed":
+        return (
+          <Badge
+            variant="outline"
+            className="bg-green-50 text-green-700 border-green-200"
+          >
+            Confirmed
+          </Badge>
+        )
+      case "pending":
+        return (
+          <Badge
+            variant="outline"
+            className="bg-yellow-50 text-yellow-700 border-yellow-200"
+          >
+            Pending
+          </Badge>
+        )
+      case "completed":
+        return (
+          <Badge
+            variant="outline"
+            className="bg-blue-50 text-blue-700 border-blue-200"
+          >
+            Completed
+          </Badge>
+        )
+      case "cancelled":
+        return (
+          <Badge
+            variant="outline"
+            className="bg-red-50 text-red-700 border-red-200"
+          >
+            Cancelled
+          </Badge>
+        )
+      default:
+        return <Badge variant="outline">{status}</Badge>
+    }
+  }
 
-				setCustomer({
-					id: userData._id,
-					name: userData.name,
-					email: userData.email,
-					number: userData.number || "N/A",
-				});
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p>Cargando datos del cliente...</p>
+      </div>
+    )
+  }
 
-				// Convertir el historial a un formato más útil para mostrar
-				const formattedHistory: HistoryEntry[] = userData.history.map(
-					(item, index) => ({
-						id: `ACT-${index + 1}`.padStart(7, "0"),
-						date: new Date(item.date).toLocaleDateString(),
-						action: item.action,
-						details: {
-							status: "completed",
-						},
-					}),
-				);
+  if (error || !customer) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p className="text-red-500">{error || "Error fetching data"}</p>
+      </div>
+    )
+  }
 
-				setHistory(formattedHistory);
-			} catch (err) {
-				console.error("Error fetching customer data:", err);
-				setError("Error al cargar los datos del cliente");
-			} finally {
-				setLoading(false);
-			}
-		};
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-2">
+        <Link href="/dashboard/clients">
+          <Button variant="outline" size="icon">
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+        </Link>
+        <h1 className="text-3xl font-bold tracking-tight">
+          Historial del Cliente
+        </h1>
+      </div>
 
-		fetchCustomerData();
-	}, [customerId]);
-
-	const getStatusBadge = (status: string) => {
-		switch (status) {
-			case "confirmed":
-				return (
-					<Badge
-						variant="outline"
-						className="bg-green-50 text-green-700 border-green-200"
-					>
-						Confirmed
-					</Badge>
-				);
-			case "pending":
-				return (
-					<Badge
-						variant="outline"
-						className="bg-yellow-50 text-yellow-700 border-yellow-200"
-					>
-						Pending
-					</Badge>
-				);
-			case "completed":
-				return (
-					<Badge
-						variant="outline"
-						className="bg-blue-50 text-blue-700 border-blue-200"
-					>
-						Completed
-					</Badge>
-				);
-			case "cancelled":
-				return (
-					<Badge
-						variant="outline"
-						className="bg-red-50 text-red-700 border-red-200"
-					>
-						Cancelled
-					</Badge>
-				);
-			default:
-				return <Badge variant="outline">{status}</Badge>;
-		}
-	};
-
-	if (loading) {
-		return (
-			<div className="flex justify-center items-center h-64">
-				<p>Cargando datos del cliente...</p>
-			</div>
-		);
-	}
-
-	if (error || !customer) {
-		return (
-			<div className="flex justify-center items-center h-64">
-				<p className="text-red-500">{error || "Error al cargar los datos"}</p>
-			</div>
-		);
-	}
-
-	return (
-		<div className="space-y-6">
-			<div className="flex items-center gap-2">
-				<Link href="/dashboard/clients">
-					<Button variant="outline" size="icon">
-						<ArrowLeft className="h-4 w-4" />
-					</Button>
-				</Link>
-				<h1 className="text-3xl font-bold tracking-tight">
-					Historial del Cliente
-				</h1>
-			</div>
-
-			<Card>
-				<CardHeader>
-					<CardTitle>Cliente: {customer.name}</CardTitle>
-					<CardDescription>
-						Email: {customer.email} | Teléfono: {customer.number}
-					</CardDescription>
-				</CardHeader>
-				<CardContent>
-					{history.length === 0 ? (
-						<div className="text-center py-8 text-gray-500">
-							Este cliente no tiene historial de actividades
-						</div>
-					) : (
-						<Table>
-							<TableHeader>
-								<TableRow>
-									<TableHead>ID</TableHead>
-									<TableHead>Fecha</TableHead>
-									<TableHead>Acción</TableHead>
-									<TableHead>Estado</TableHead>
-								</TableRow>
-							</TableHeader>
-							<TableBody>
-								{history.map((entry) => (
-									<TableRow key={entry.id}>
-										<TableCell className="font-medium">{entry.id}</TableCell>
-										<TableCell>{entry.date}</TableCell>
-										<TableCell>{entry.action}</TableCell>
-										<TableCell>
-											{entry.details?.status &&
-												getStatusBadge(entry.details.status)}
-										</TableCell>
-									</TableRow>
-								))}
-							</TableBody>
-						</Table>
-					)}
-				</CardContent>
-			</Card>
-		</div>
-	);
+      <Card>
+        <CardHeader>
+          <CardTitle>Cliente: {customer.name}</CardTitle>
+          <CardDescription>
+            Email: {customer.email} | Teléfono: {customer.phone}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {history.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              Este cliente no tiene historial de actividades
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>ID</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Time</TableHead>
+                  <TableHead>State</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {history.length > 0 ? (
+                  history.map((entry) => (
+                    <TableRow key={entry.customer_id}>
+                      <TableCell className="font-medium">
+                        {entry.customer_id}
+                      </TableCell>
+                      <TableCell>{entry.date}</TableCell>
+                      <TableCell>{entry.time}</TableCell>
+                      <TableCell>
+                        {entry.status && getStatusBadge(entry.status)}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow className="text-md mt-8 font-bold">
+                    <TableCell colSpan={4} className="text-center py-8">
+                      This customer has no history.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  )
 }

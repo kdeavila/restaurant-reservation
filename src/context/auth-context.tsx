@@ -7,9 +7,6 @@ import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 
-const ADMIN_API_URL =
-	"https://powerful-thicket-20953-b0be64efe5ec.herokuapp.com";
-
 type User = {
 	_id: string;
 	name: string;
@@ -66,10 +63,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		setError(null);
 
 		try {
-			const data = await apiPost<LoginRequest, LoginResponse>("/admin/login", {
+			const data = await apiPost<LoginRequest, LoginResponse>("/auth/login", {
 				email,
 				password,
 			});
+
+			console.log(data);
 
 			if (data.error) {
 				throw new Error(data.error || "Error al iniciar sesión");
@@ -86,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 			const userData: User = {
 				_id: tokenPayload.id,
 				email: tokenPayload.email,
-				name: tokenPayload.name || "Administrador",
+				name: tokenPayload.name || "Admin",
 				role: "admin",
 				is_active: true,
 			};

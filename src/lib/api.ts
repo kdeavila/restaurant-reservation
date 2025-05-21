@@ -1,7 +1,5 @@
 import { getCookie } from "cookies-next";
 
-const API_URL = "https://powerful-thicket-20953-b0be64efe5ec.herokuapp.com";
-
 export function getAuthHeaders() {
 	const token = getCookie("auth_token");
 	const headers: Record<string, string> = {
@@ -19,7 +17,7 @@ export async function fetchWithAuth(
 	endpoint: string,
 	options: RequestInit = {},
 ) {
-	const url = endpoint.startsWith("http") ? endpoint : `${API_URL}${endpoint}`;
+	const url = endpoint.startsWith("http") ? endpoint : `${process.env.NEXT_PUBLIC_API_URL}/api${endpoint}`;
 	const headers = {
 		...getAuthHeaders(),
 		...options.headers,

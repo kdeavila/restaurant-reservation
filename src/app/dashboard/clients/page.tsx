@@ -8,11 +8,10 @@ import Link from "next/link";
 import { useState } from "react";
 
 export default function CustomersPage() {
-	const [searchQuery, setSearchQuery] = useState("");
 	const [currentQuery, setCurrentQuery] = useState("");
 
-	const handleSearch = () => {
-		setCurrentQuery(searchQuery);
+	const handleSearch = (query: string) => {
+		setCurrentQuery(query);
 	};
 
 	return (
@@ -31,13 +30,9 @@ export default function CustomersPage() {
 				<Input
 					placeholder="Search clients..."
 					className="max-w-sm"
-					value={searchQuery}
-					onChange={(e) => setSearchQuery(e.target.value)}
-					onKeyPress={(e) => e.key === "Enter" && handleSearch()}
+					value={currentQuery}
+					onChange={(e) => handleSearch(e.target.value)}
 				/>
-				<Button variant="outline" onClick={handleSearch}>
-					Search
-				</Button>
 			</div>
 
 			<CustomerTable searchQuery={currentQuery} />

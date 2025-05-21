@@ -1,53 +1,20 @@
 import { apiDelete, apiGet, apiPost, apiPut } from "@/lib/api";
+import type { CreateCustomerDTO, Customer, CustomerTableData, ReservationDetails, UpdateCustomerDTO } from "@/types/app";
 
-export interface HistoryItem {
-	date: string;
-	action: string;
-}
-
-export interface User {
-	_id: string;
-	name: string;
-	email: string;
-	number: string;
-	history: HistoryItem[];
-	is_active: boolean;
-}
-
-export interface CustomerTableData {
-	id: string;
-	name: string;
-	email: string;
-	phone: string;
-	reservations: number;
-}
-
-export interface CreateUserData {
-	name: string;
-	email: string;
-	number?: string;
-}
-
-export interface UpdateUserData {
-	name?: string;
-	email?: string;
-	number?: string;
-}
-
-export async function getAllActiveUsers(): Promise<User[]> {
+export async function getCustomers(): Promise<Customer[]> {
 	try {
-		const users = await apiGet<User[]>("/user/getallactive");
-		return users;
+		const customers = await apiGet<Customer[]>("/customers");
+		return customers;
 	} catch (error) {
-		console.error("Error fetching active users:", error);
+		console.error("Error fetching active customers:", error);
 		return [];
 	}
 }
 
-export async function getUserById(id: string): Promise<User | null> {
+export async function getCustomer(id: number): Promise<Customer | null> {
 	try {
-		const users = await getAllActiveUsers();
-		const user = users.find((user) => user._id === id);
+		const customers = await getCustomers();
+		const user = customers.find((user) => user.id_customer === id);
 		return user || null;
 	} catch (error) {
 		console.error(`Error fetching user with ID ${id}:`, error);
@@ -55,16 +22,16 @@ export async function getUserById(id: string): Promise<User | null> {
 	}
 }
 
-export async function createUser(userData: CreateUserData): Promise<User> {
+export async function createCustomer(userData: CreateCustomerDTO): Promise<Customer> {
 	try {
 		const data = {
 			name: userData.name,
 			email: userData.email,
-			number: userData.number || "",
+			phone: userData.phone || "",
 		};
 
-		const response = await apiPost<typeof data, User | { error: string }>(
-			"/user/create",
+		const response = await apiPost<typeof data, Customer | { error: string }>(
+			"/customers",
 			data,
 		);
 
@@ -72,20 +39,16 @@ export async function createUser(userData: CreateUserData): Promise<User> {
 			throw new Error(response.error);
 		}
 
-		if (!("_id" in response)) {
-			throw new Error("Formato de respuesta inesperado");
-		}
-
-		return response as User;
+		return response as Customer;
 	} catch (error) {
-		let errorMessage = "Error al crear el usuario";
+		let errorMessage = "Error creating user";
 
 		if (error instanceof Error) {
 			if (
 				error.message.includes("duplicate key error") &&
 				error.message.includes("email")
 			) {
-				errorMessage = "Ya existe un usuario con este email";
+				errorMessage = "A user with this email already exists";
 			} else {
 				errorMessage = error.message.split("->").pop()?.trim() || error.message;
 			}
@@ -96,13 +59,13 @@ export async function createUser(userData: CreateUserData): Promise<User> {
 	}
 }
 
-export async function updateUser(
-	id: string,
-	userData: UpdateUserData,
-): Promise<User> {
+export async function updateCustomer(
+	id: number,
+	userData: UpdateCustomerDTO,
+): Promise<Customer> {
 	try {
-		const endpoint = `/user/update/${id}`;
-		const response = await apiPut<UpdateUserData, User | { error: string }>(
+		const endpoint = `/customers/${id}`;
+		const response = await apiPut<UpdateCustomerDTO, Customer | { error: string }>(
 			endpoint,
 			userData,
 		);
@@ -111,20 +74,16 @@ export async function updateUser(
 			throw new Error(response.error);
 		}
 
-		if (!("_id" in response)) {
-			throw new Error("Formato de respuesta inesperado");
-		}
-
-		return response as User;
+		return response as Customer;
 	} catch (error) {
-		let errorMessage = "Error al actualizar el usuario";
+		let errorMessage = "Error updating user";
 
 		if (error instanceof Error) {
 			if (
 				error.message.includes("duplicate key error") &&
 				error.message.includes("email")
 			) {
-				errorMessage = "Ya existe un usuario con este email";
+				errorMessage = "A user with this email already exists";
 			} else {
 				errorMessage = error.message.split("->").pop()?.trim() || error.message;
 			}
@@ -135,12 +94,12 @@ export async function updateUser(
 	}
 }
 
-export async function softDeleteUser(id: string): Promise<void> {
+export async function deleteCustomer(id: number): Promise<void> {
 	try {
-		const endpoint = `/user/softdelete/${id}`;
+		const endpoint = `/customers/${id}`;
 		await apiDelete(endpoint);
 	} catch (error) {
-		let errorMessage = "Error al eliminar el usuario";
+		let errorMessage = "Error deleting user";
 		if (error instanceof Error) {
 			errorMessage = error.message;
 		}
@@ -149,12 +108,22 @@ export async function softDeleteUser(id: string): Promise<void> {
 	}
 }
 
-export function mapUsersToCustomerData(users: User[]): CustomerTableData[] {
+export async function getCustomerHistory(id: number): Promise<ReservationDetails[]> {
+	try {
+		const endpoint = `/user/history/${id}`;
+		const history = await apiGet<ReservationDetails[]>(endpoint);
+		return history;
+	} catch (error) {
+		console.error("Error fetching user history:", error);
+		return [];
+	}
+}
+
+export function customersAdapter(users: Customer[]): CustomerTableData[] {
 	return users.map((user) => ({
-		id: user._id,
+		id: user.id_customer,
 		name: user.name,
 		email: user.email,
-		phone: user.number || "N/A",
-		reservations: user.history?.length || 0,
+		phone: user.phone || "N/A"
 	}));
 }

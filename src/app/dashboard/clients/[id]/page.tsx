@@ -3,8 +3,8 @@
 import type React from "react";
 
 import {
-	getUserById,
-	updateUser,
+	getCustomer,
+	updateCustomer,
 } from "@/features/clients/services/client-service";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/ui/button";
@@ -31,7 +31,7 @@ export default function EditCustomerPage() {
 	const [formData, setFormData] = useState({
 		name: "",
 		email: "",
-		number: "",
+		phone: "",
 	});
 
 	const [loading, setLoading] = useState(true);
@@ -46,7 +46,7 @@ export default function EditCustomerPage() {
 		const fetchCustomerData = async () => {
 			try {
 				setLoading(true);
-				const userData = await getUserById(customerId);
+				const userData = await getCustomer(Number(customerId));
 
 				if (!userData) {
 					setError("Cliente no encontrado");
@@ -56,11 +56,11 @@ export default function EditCustomerPage() {
 				setFormData({
 					name: userData.name,
 					email: userData.email,
-					number: userData.number || "",
+					phone: userData.phone || "",
 				});
 			} catch (err) {
 				console.error("Error fetching customer data:", err);
-				setError("Error al cargar los datos del cliente");
+				setError("Error fetching customer data");
 			} finally {
 				setLoading(false);
 			}
@@ -83,12 +83,12 @@ export default function EditCustomerPage() {
 		const newErrors = { name: "", email: "" };
 
 		if (!formData.name.trim()) {
-			newErrors.name = "El nombre es obligatorio";
+			newErrors.name = "Name is required";
 			valid = false;
 		}
 
 		if (!formData.email.trim()) {
-			newErrors.email = "El email es obligatorio";
+			newErrors.email = "Email is required";
 			valid = false;
 		} else if (!/\S+@\S+\.\S+/.test(formData.email)) {
 			newErrors.email = "El email no es válido";
@@ -105,22 +105,22 @@ export default function EditCustomerPage() {
 		if (validateForm()) {
 			try {
 				setIsSubmitting(true);
-				const updatedUser = await updateUser(customerId, {
+				const updatedUser = await updateCustomer(customerId, {
 					name: formData.name,
 					email: formData.email,
-					number: formData.number,
+					phone: formData.phone,
 				});
 
-				if (updatedUser?._id) {
+				if (updatedUser?.id_customer) {
 					toast({
-						title: "Cliente actualizado",
+						title: "Client updated",
 						description:
-							"Los datos del cliente han sido actualizados correctamente",
+							"The client's data has been updated successfully",
 					});
 					router.push("/dashboard/clients");
 				}
 			} catch (error) {
-				let errorMessage = "Error al actualizar el cliente";
+				let errorMessage = "Error updating the client";
 				if (error instanceof Error) {
 					errorMessage = error.message;
 				}
@@ -202,11 +202,11 @@ export default function EditCustomerPage() {
 						</div>
 
 						<div className="space-y-3">
-							<Label htmlFor="number">Phone number (optional)</Label>
+							<Label htmlFor="phone">Phone number (optional)</Label>
 							<Input
-								id="number"
-								name="number"
-								value={formData.number}
+								id="phone"
+								name="phone"
+								value={formData.phone}
 								onChange={handleChange}
 								placeholder="612345678"
 								disabled={isSubmitting}

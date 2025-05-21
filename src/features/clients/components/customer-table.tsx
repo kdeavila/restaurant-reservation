@@ -32,12 +32,8 @@ import {
 import { Edit, History, MoreHorizontal, Trash } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import {
-	getAllActiveUsers,
-	mapUsersToCustomerData,
-	softDeleteUser,
-} from "../services/client-service";
-import type { CustomerTableData } from "../services/client-service";
+import { customersAdapter, deleteCustomer, getCustomers } from "../services/client-service";
+import type { CustomerTableData } from "@/types/app";
 
 interface CustomerTableProps {
 	searchQuery?: string;
@@ -48,14 +44,14 @@ export function CustomerTable({ searchQuery = "" }: CustomerTableProps) {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-	const [customerToDelete, setCustomerToDelete] = useState<string | null>(null);
+	const [customerToDelete, setCustomerToDelete] = useState<number | null>(null);
 	const [isDeleting, setIsDeleting] = useState(false);
 
 	const fetchCustomers = async () => {
 		try {
 			setLoading(true);
-			const users = await getAllActiveUsers();
-			const mappedCustomers = mapUsersToCustomerData(users);
+			const customers  = await getCustomers();
+			const mappedCustomers = customersAdapter(customers);
 			setCustomers(mappedCustomers);
 		} catch (err) {
 			console.error("Error fetching customers:", err);
@@ -65,11 +61,12 @@ export function CustomerTable({ searchQuery = "" }: CustomerTableProps) {
 		}
 	};
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		fetchCustomers();
 	}, []);
 
-	const handleDelete = (id: string, name: string) => {
+	const handleDelete = (id: number) => {
 		setCustomerToDelete(id);
 		setDeleteDialogOpen(true);
 	};
@@ -79,7 +76,7 @@ export function CustomerTable({ searchQuery = "" }: CustomerTableProps) {
 
 		try {
 			setIsDeleting(true);
-			await softDeleteUser(customerToDelete);
+			await deleteCustomer(customerToDelete);
 			toast({
 				title: "Cliente eliminado",
 				description: "El cliente ha sido eliminado correctamente",
@@ -134,7 +131,6 @@ export function CustomerTable({ searchQuery = "" }: CustomerTableProps) {
 							<TableHead>Name</TableHead>
 							<TableHead>Email</TableHead>
 							<TableHead>Phone</TableHead>
-							<TableHead>Reservations</TableHead>
 							<TableHead className="w-[100px]">Actions</TableHead>
 						</TableRow>
 					</TableHeader>
@@ -151,15 +147,6 @@ export function CustomerTable({ searchQuery = "" }: CustomerTableProps) {
 									<TableCell className="font-medium">{customer.name}</TableCell>
 									<TableCell>{customer.email}</TableCell>
 									<TableCell>{customer.phone}</TableCell>
-									<TableCell>
-										{customer.reservations > 0 ? (
-											<Badge variant="secondary">{customer.reservations}</Badge>
-										) : (
-											<span className="text-muted-foreground">
-												No reservations
-											</span>
-										)}
-									</TableCell>
 									<TableCell>
 										<DropdownMenu>
 											<DropdownMenuTrigger asChild>
@@ -192,7 +179,7 @@ export function CustomerTable({ searchQuery = "" }: CustomerTableProps) {
 												<DropdownMenuItem
 													className="text-red-600 cursor-pointer"
 													onClick={() =>
-														handleDelete(customer.id, customer.name)
+														handleDelete(customer.id)
 													}
 												>
 													<div className="flex items-center w-full">

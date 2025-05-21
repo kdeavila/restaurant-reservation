@@ -1,16 +1,20 @@
+"use client"
 import { DatePicker } from "@/features/reservations/components/date-picker"
 import { ReservationCalendar } from "@/features/reservations/components/reservation-calendar"
 import { Button } from "@/ui/button"
 import { Input } from "@/ui/input"
 import { PlusCircle } from "lucide-react"
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
+import { useState } from "react"
 
-export default async function ReservationsPage({
-  searchParams,
-}: {
-  searchParams?: { date?: string }
-}) {
-  const date = searchParams?.date || new Date().toISOString().split("T")[0]
+export default function ReservationsPage() {
+  const [currentQuery, setCurrentQuery] = useState("")
+  const searchParams = useSearchParams()
+  const handleSearch = (query: string) => {
+    setCurrentQuery(query)
+  }
+  const date = searchParams?.get("date") || new Date().toISOString().split("T")[0]
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -25,11 +29,14 @@ export default async function ReservationsPage({
 
       <div className="flex items-center gap-2">
         <DatePicker />
-        <Input placeholder="Search by client..." className="max-w-sm" />
-        <Button variant="outline">Search</Button>
+        <Input
+          placeholder="Search by client..."
+          className="max-w-sm"
+          onChange={(e) => handleSearch(e.target.value)}
+        />
       </div>
 
-      <ReservationCalendar date={date} />
+      <ReservationCalendar query={currentQuery} date={date} />
     </div>
   )
 }

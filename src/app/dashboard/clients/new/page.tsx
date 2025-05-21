@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { createUser } from "@/features/clients/services/client-service";
+import { createCustomer } from "@/features/clients/services/client-service";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/ui/button";
 import {
@@ -25,7 +25,7 @@ export default function NewCustomerPage() {
 	const [formData, setFormData] = useState({
 		name: "",
 		email: "",
-		number: "",
+		phone: "",
 	});
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -71,17 +71,17 @@ export default function NewCustomerPage() {
 		if (validateForm()) {
 			try {
 				setIsSubmitting(true);
-				const newUser = await createUser({
+				const newUser = await createCustomer({
 					name: formData.name,
 					email: formData.email,
-					number: formData.number,
+					phone: formData.phone,
 				});
 
 				// Verificar que el usuario se creó correctamente
-				if (newUser?._id) {
+				if (newUser?.id_customer) {
 					toast({
-						title: "Usuario creado",
-						description: "El usuario ha sido registrado exitosamente",
+						title: "User created",
+						description: "The user has been successfully registered",
 						variant: "default",
 					});
 					router.push("/dashboard/clients");
@@ -154,13 +154,13 @@ export default function NewCustomerPage() {
 						</div>
 
 						<div className="space-y-2">
-							<Label htmlFor="number">Phone number (optional)</Label>
+							<Label htmlFor="phone">Phone number (optional)</Label>
 							<Input
-								id="number"
-								name="number"
-								value={formData.number}
+								id="phone"
+								name="phone"
+								value={formData.phone}
 								onChange={handleChange}
-								placeholder="612345678"
+								placeholder="+573201234567"
 								disabled={isSubmitting}
 							/>
 						</div>

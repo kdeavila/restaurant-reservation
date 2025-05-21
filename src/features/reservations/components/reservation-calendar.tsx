@@ -1,3 +1,4 @@
+"use client"
 import { Badge } from "@/ui/badge"
 import { Button } from "@/ui/button"
 import {
@@ -18,15 +19,19 @@ import {
 } from "@/ui/table"
 import { Edit, Mail, MoreHorizontal, Trash } from "lucide-react"
 import Link from "next/link"
-import { getReservationsByDate } from "../services/reservations.service"
 
 interface Props {
   date: string
+  query: string
 }
 
-export async function ReservationCalendar({ date }: Props) {
-  const reservations = await getReservationsByDate(date)
-  if (reservations instanceof Error) {
+export function ReservationCalendar({ date, query }: Props) {
+  const [reservations, setReservations] = useState([])
+  const filteredReservations = query ?  : query
+  useEffect(() => {
+    
+  }, []);
+  if (filteredReservations instanceof Error) {
     return (
       <div className="text-md">
         There are no reservations for this date ({date}).
@@ -49,7 +54,7 @@ export async function ReservationCalendar({ date }: Props) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {reservations.map((reservation) => (
+          {filteredReservations.map((reservation) => (
             <TableRow key={reservation.id}>
               <TableCell className="font-medium">{reservation.id}</TableCell>
               <TableCell>{reservation.customer}</TableCell>
