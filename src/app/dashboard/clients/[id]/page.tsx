@@ -28,7 +28,7 @@ export default function EditCustomerPage() {
 	const [formData, setFormData] = useState({
 		name: "",
 		email: "",
-		phone: "",
+		number: "",
 	});
 
 	const [loading, setLoading] = useState(true);
@@ -52,7 +52,7 @@ export default function EditCustomerPage() {
 				setFormData({
 					name: userData.name,
 					email: userData.email,
-					phone: userData.phone || "",
+					number: userData.number || "",
 				});
 			} catch (err) {
 				console.error("Error fetching customer data:", err);
@@ -174,11 +174,11 @@ export default function EditCustomerPage() {
 						</div>
 
 						<div className="space-y-2">
-							<Label htmlFor="phone">Phone (optional)</Label>
+							<Label htmlFor="number">Phone number (optional)</Label>
 							<Input
-								id="phone"
-								name="phone"
-								value={formData.phone}
+								id="number"
+								name="number"
+								value={formData.number}
 								onChange={handleChange}
 								placeholder="612345678"
 							/>

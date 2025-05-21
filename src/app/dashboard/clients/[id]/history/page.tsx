@@ -43,7 +43,7 @@ export default function CustomerHistoryPage() {
 		id: string;
 		name: string;
 		email: string;
-		phone: string;
+		number: string;
 	} | null>(null);
 	
 	const [history, setHistory] = useState<HistoryEntry[]>([]);
@@ -65,7 +65,7 @@ export default function CustomerHistoryPage() {
 					id: userData._id,
 					name: userData.name,
 					email: userData.email,
-					phone: userData.phone || "N/A",
+					number: userData.number || "N/A",
 				});
 				
 				// Convertir el historial a un formato más útil para mostrar
@@ -74,7 +74,6 @@ export default function CustomerHistoryPage() {
 					date: new Date(item.date).toLocaleDateString(),
 					action: item.action,
 					details: {
-						// Aquí podríamos extraer más detalles si estuvieran disponibles en el historial
 						status: "completed"
 					}
 				}));
@@ -167,7 +166,7 @@ export default function CustomerHistoryPage() {
 				<CardHeader>
 					<CardTitle>Cliente: {customer.name}</CardTitle>
 					<CardDescription>
-						Email: {customer.email} | Teléfono: {customer.phone}
+						Email: {customer.email} | Teléfono: {customer.number}
 					</CardDescription>
 				</CardHeader>
 				<CardContent>

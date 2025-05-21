@@ -1,4 +1,4 @@
-import { apiGet } from "@/lib/api";
+import { apiGet, apiPost } from "@/lib/api";
 
 export interface HistoryItem {
   date: string;
@@ -9,13 +9,9 @@ export interface User {
   _id: string;
   name: string;
   email: string;
-  password: string;
+  number: string;
   history: HistoryItem[];
   is_active: boolean;
-  role: string;
-  __v: number;
-  // Campo opcional para número de teléfono (no está en la API)
-  phone?: string;
 }
 
 export interface CustomerTableData {
@@ -24,6 +20,12 @@ export interface CustomerTableData {
   email: string;
   phone: string;
   reservations: number;
+}
+
+export interface CreateUserData {
+  name: string;
+  email: string;
+  number?: string;
 }
 
 export async function getAllUsers(): Promise<User[]> {
@@ -38,8 +40,6 @@ export async function getAllUsers(): Promise<User[]> {
 
 export async function getUserById(id: string): Promise<User | null> {
   try {
-    // Como la API no tiene un endpoint específico para obtener un usuario por ID,
-    // obtenemos todos los usuarios y filtramos por ID
     const users = await getAllUsers();
     const user = users.find(user => user._id === id);
     return user || null;
@@ -49,12 +49,50 @@ export async function getUserById(id: string): Promise<User | null> {
   }
 }
 
+export async function createUser(userData: CreateUserData): Promise<User> {
+  try {
+    const data = {
+      name: userData.name,
+      email: userData.email,
+      number: userData.number || ""
+    };
+    
+    const response = await apiPost<typeof data, User | { error: string }>('/user/create', data);
+    
+    // Si la respuesta tiene un campo de error, lanzar una excepción
+    if ('error' in response) {
+      throw new Error(response.error);
+    }
+    
+    // Si la respuesta no contiene un _id, también es un error
+    if (!('_id' in response)) {
+      throw new Error("Formato de respuesta inesperado");
+    }
+    
+    return response as User;
+  } catch (error) {
+    // Procesar los mensajes de error comunes para mostrar mensajes más amigables
+    let errorMessage = "Error al crear el usuario";
+    
+    if (error instanceof Error) {
+      if (error.message.includes("duplicate key error") && error.message.includes("email")) {
+        errorMessage = "Ya existe un usuario con este email";
+      } else {
+        errorMessage = error.message.split("->").pop()?.trim() || error.message;
+      }
+    }
+    
+    console.error("Error creating user:", error);
+    throw new Error(errorMessage);
+  }
+}
+
 export function mapUsersToCustomerData(users: User[]): CustomerTableData[] {
   return users.map(user => ({
     id: user._id,
     name: user.name,
     email: user.email,
-    phone: user.phone || 'N/A', // Por defecto 'N/A' si no hay teléfono
+    phone: user.number || 'N/A',
     reservations: user.history?.length || 0
   }));
 } 
