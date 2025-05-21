@@ -68,7 +68,6 @@ export function ReservationCalendar({ date, query }: Props) {
     }
     fetchReservations()
   }, [])
-  console.log(reservations)
 
   const handleDelete = (id: number) => {
     setReservationToDelete(id)
@@ -104,14 +103,20 @@ export function ReservationCalendar({ date, query }: Props) {
   }
 
   const filteredReservations = reservations
-    .filter(
-      (reservation) =>
-        !query ||
-        reservation.client
-          .toString()
-          .toLocaleLowerCase()
-          .includes(query.toLocaleLowerCase())
-    )
+    .filter((reservation) => {
+      // Filter by date
+      const matchesDate = date ? reservation.date === date : true;
+      
+      // Filter by client name
+      const matchesClient = query 
+        ? reservation.client
+            .toString()
+            .toLowerCase()
+            .includes(query.toLowerCase())
+        : true;
+      
+      return matchesDate && matchesClient;
+    })
     .sort((a, b) => {
       // Confirmed first, then cancelled
       if (a.status === b.status) return 0
@@ -125,13 +130,7 @@ export function ReservationCalendar({ date, query }: Props) {
   if (error) {
     return <div className="p-8 text-center text-red-500">{error}</div>
   }
-  if (filteredReservations.length === 0) {
-    return (
-      <div className="text-md">
-        There are no reservations for this date ({date}).
-      </div>
-    )
-  }
+  
   return (
     <div className="border rounded-md">
       <Table>
@@ -148,59 +147,67 @@ export function ReservationCalendar({ date, query }: Props) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredReservations.map((reservation) => (
-            <TableRow key={reservation.id}>
-              <TableCell className="font-medium">{reservation.id}</TableCell>
-              <TableCell>{reservation.client}</TableCell>
-              <TableCell>{reservation.date}</TableCell>
-              <TableCell>{reservation.time}</TableCell>
-              <TableCell>{reservation.people}</TableCell>
-              <TableCell>{reservation.table}</TableCell>
-              <TableCell>
-                <Badge
-                  variant={
-                    reservation.status === "confirmed" ? "default" : "outline"
-                  }
-                >
-                  {reservation.status}
-                </Badge>
-              </TableCell>
-              <TableCell>
-                <DropdownMenu>
-                  {reservation.status === "confirmed" && (
-                    <>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <span className="sr-only">Open menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>
-                          <Link
-                            href={`/dashboard/reservations/${reservation.id}`}
-                            className="flex items-center"
-                          >
-                            <Edit className="mr-2 h-4 w-4" />
-                            <span>Edit</span>
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="text-red-600 cursor-pointer"
-                          onClick={() => handleDelete(reservation.id)}
-                        >
-                          <Trash className="h-4 w-4" />
-                          <span>Cancel</span>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </>
-                  )}
-                </DropdownMenu>
+          {filteredReservations.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={8} className="text-center py-8">
+                No reservations found {query && date ? `for "${query}" on ${date}` : query ? `for "${query}"` : date ? `for ${date}` : ""}
               </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            filteredReservations.map((reservation) => (
+              <TableRow key={reservation.id}>
+                <TableCell className="font-medium">{reservation.id}</TableCell>
+                <TableCell>{reservation.client}</TableCell>
+                <TableCell>{reservation.date}</TableCell>
+                <TableCell>{reservation.time}</TableCell>
+                <TableCell>{reservation.people}</TableCell>
+                <TableCell>{reservation.table}</TableCell>
+                <TableCell>
+                  <Badge
+                    variant={
+                      reservation.status === "confirmed" ? "default" : "outline"
+                    }
+                  >
+                    {reservation.status}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <DropdownMenu>
+                    {reservation.status === "confirmed" && (
+                      <>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem>
+                            <Link
+                              href={`/dashboard/reservations/${reservation.id}`}
+                              className="flex items-center"
+                            >
+                              <Edit className="mr-2 h-4 w-4" />
+                              <span>Edit</span>
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="text-red-600 cursor-pointer"
+                            onClick={() => handleDelete(reservation.id)}
+                          >
+                            <Trash className="h-4 w-4" />
+                            <span>Cancel</span>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </>
+                    )}
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

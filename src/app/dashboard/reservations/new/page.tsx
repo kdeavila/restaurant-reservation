@@ -19,30 +19,37 @@ import { Input } from "@/ui/input"
 import { Label } from "@/ui/label"
 import { ArrowLeft, Save, Users } from "lucide-react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useState, useEffect } from "react"
 import { createReservation } from "@/features/reservations/services/reservations.service"
 import { toast } from "@/hooks/use-toast"
 
 export default function NewReservationPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const preselectedTable = searchParams.get("table") || ""
+  
   const [formData, setFormData] = useState({
     customer: "",
     date: new Date(),
     time: "",
     people: "2",
-    table: "",
+    table: preselectedTable,
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
+  const isFormValid = () => {
+    return (
+      formData.customer.trim() !== "" &&
+      formData.time.trim() !== "" &&
+      formData.people.trim() !== "" &&
+      formData.table.trim() !== ""
+    )
+  }
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (
-      !formData.customer ||
-      !formData.date ||
-      !formData.time ||
-      !formData.people ||
-      !formData.table
-    ) {
+    if (!isFormValid()) {
       toast({
         title: "Error",
         description: "Please complete all required fields.",
@@ -50,7 +57,9 @@ export default function NewReservationPage() {
       })
       return
     }
+    
     try {
+      setIsSubmitting(true)
       await createReservation({
         customer_id: Number(formData.customer),
         table_id: Number(formData.table),
@@ -61,10 +70,11 @@ export default function NewReservationPage() {
         time: formData.time,
         people: Number(formData.people),
       })
-      // toast({
-      //   title: "Reservation created",
-      //   description: "The reservation has been created successfully.",
-      // })
+      
+      toast({
+        title: "Success",
+        description: "Reservation created successfully.",
+      })
       router.push("/dashboard/reservations")
     } catch (error) {
       let errorMessage = "Error creating the reservation"
@@ -74,6 +84,8 @@ export default function NewReservationPage() {
         description: errorMessage,
         variant: "destructive",
       })
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -143,6 +155,7 @@ export default function NewReservationPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, people: e.target.value })
                   }
+                  required
                 />
               </div>
             </div>
@@ -165,9 +178,12 @@ export default function NewReservationPage() {
             >
               Cancel
             </Button>
-            <Button type="submit">
+            <Button 
+              type="submit"
+              disabled={!isFormValid() || isSubmitting}
+            >
               <Save className="mr-2 h-4 w-4" />
-              Save Reservation
+              {isSubmitting ? "Creating..." : "Save Reservation"}
             </Button>
           </CardFooter>
         </form>

@@ -23,7 +23,7 @@ import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import {
   updateReservation,
-  getReservations,
+  getReservation,
 } from "@/features/reservations/services/reservations.service"
 import { toast } from "@/hooks/use-toast"
 import { useParams } from "next/navigation"
@@ -31,7 +31,7 @@ import { useParams } from "next/navigation"
 export default function EditReservationPage() {
   const router = useRouter()
   const params = useParams()
-  const reservationId = params.id
+  const reservationId = Number(params.id)
   const [formData, setFormData] = useState({
     customer: "",
     date: new Date(),
@@ -40,37 +40,53 @@ export default function EditReservationPage() {
     table: "",
   })
   const [loading, setLoading] = useState(true)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchReservation = async () => {
-      setLoading(true)
-      const reservations = await getReservations()
-      const reservation = reservations.find(
-        (r) => r.id_reservation === Number(reservationId)
-      )
-      if (reservation) {
+      try {
+        setLoading(true)
+        const reservation = await getReservation(reservationId)
+        
+        if (!reservation) {
+          setError("Reservation not found")
+          return
+        }
+        
         setFormData({
-          customer: String(reservation.customer_id),
+          customer: String(reservation.Customer.id_customer),
           date: new Date(reservation.date),
           time: reservation.time,
           people: String(reservation.people),
           table: String(reservation.table_id),
         })
+      } catch (err) {
+        setError("Error loading reservation data")
+        console.error("Error fetching reservation:", err)
+      } finally {
+        setLoading(false)
       }
-      setLoading(false)
     }
-    fetchReservation()
+    
+    if (reservationId) {
+      fetchReservation()
+    }
   }, [reservationId])
+
+  const isFormValid = () => {
+    return (
+      formData.customer.trim() !== "" &&
+      formData.time.trim() !== "" &&
+      formData.people.trim() !== "" &&
+      formData.table.trim() !== ""
+    )
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (
-      !formData.customer ||
-      !formData.date ||
-      !formData.time ||
-      !formData.people ||
-      !formData.table
-    ) {
+    
+    if (!isFormValid()) {
       toast({
         title: "Error",
         description: "Please complete all required fields.",
@@ -78,8 +94,10 @@ export default function EditReservationPage() {
       })
       return
     }
+    
     try {
-      await updateReservation(Number(reservationId), {
+      setIsSubmitting(true)
+      await updateReservation(reservationId, {
         table_id: Number(formData.table),
         date:
           typeof formData.date === "string"
@@ -87,6 +105,10 @@ export default function EditReservationPage() {
             : formData.date.toISOString().slice(0, 10),
         time: formData.time,
         people: Number(formData.people),
+      })
+      toast({
+        title: "Success",
+        description: "Reservation updated successfully.",
       })
       router.push("/dashboard/reservations")
     } catch (error) {
@@ -97,11 +119,26 @@ export default function EditReservationPage() {
         description: errorMessage,
         variant: "destructive",
       })
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
   if (loading) {
     return <div className="p-8 text-center">Loading reservation...</div>
+  }
+  
+  if (error) {
+    return (
+      <div className="p-8 text-center text-red-500">
+        {error}
+        <div className="mt-4">
+          <Button variant="outline" onClick={() => router.push("/dashboard/reservations")}>
+            Go back to reservations
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -112,7 +149,7 @@ export default function EditReservationPage() {
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold tracking-tight">New Reservation</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Edit Reservation</h1>
       </div>
 
       <Card className="max-w-2xl">
@@ -120,7 +157,7 @@ export default function EditReservationPage() {
           <CardHeader>
             <CardTitle>Reservation Information</CardTitle>
             <CardDescription>
-              Complete the form to create a new reservation.
+              Complete all required fields to update the reservation.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -170,6 +207,7 @@ export default function EditReservationPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, people: e.target.value })
                   }
+                  required
                 />
               </div>
             </div>
@@ -192,9 +230,12 @@ export default function EditReservationPage() {
             >
               Cancel
             </Button>
-            <Button type="submit">
+            <Button 
+              type="submit" 
+              disabled={!isFormValid() || isSubmitting}
+            >
               <Save className="mr-2 h-4 w-4" />
-              Save Reservation
+              {isSubmitting ? "Saving..." : "Save Reservation"}
             </Button>
           </CardFooter>
         </form>

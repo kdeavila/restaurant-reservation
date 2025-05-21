@@ -15,9 +15,9 @@ export function TimePicker({
   value: string | null
   onChange: (val: string) => void
 }) {
-  // Generate available times (from 12:00 to 23:00 every 30 minutes)
+  // Generate available times (from 12:00 to 22:00 every 30 minutes)
   const timeSlots = []
-  for (let hour = 12; hour < 24; hour++) {
+  for (let hour = 12; hour <= 22; hour++) {
     for (const minute of [0, 30]) {
       const formattedHour = hour.toString().padStart(2, "0")
       const formattedMinute = minute.toString().padStart(2, "0")

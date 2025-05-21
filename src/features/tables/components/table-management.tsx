@@ -163,60 +163,68 @@ export function TableManagement({ query }: { query: string }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredTables.map((table) => (
-            <TableRow key={table.id}>
-              <TableCell className="font-medium">Table {table.id}</TableCell>
-              <TableCell>{table.capacity} people</TableCell>
-              <TableCell>
-                {table.location.charAt(0).toUpperCase() +
-                  table.location.slice(1)}
-              </TableCell>
-              <TableCell>{getStatusBadge(table.status)}</TableCell>
-              <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                      <span className="sr-only">Open menu</span>
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>
-                      <Link
-                        href={`/dashboard/tables/${table.id}`}
-                        className="flex items-center"
-                      >
-                        <Edit className="mr-2 h-4 w-4" />
-                        <span>Edit</span>
-                      </Link>
-                    </DropdownMenuItem>
-                    {table.status === "available" && (
-                      <DropdownMenuItem>
-                        <Link
-                          href={`/dashboard/reservations/new?table=${table.id}`}
-                          className="flex items-center"
-                        >
-                          <Calendar className="mr-2 h-4 w-4" />
-                          <span>Reserve</span>
-                        </Link>
-                      </DropdownMenuItem>
-                    )}
-                    {table.status === "available" && (
-                      <DropdownMenuItem
-                        className="text-red-600 cursor-pointer"
-                        onClick={() => handleDelete(table.id)}
-                      >
-                        <Trash className="h-4 w-4" />
-                        <span>Delete</span>
-                      </DropdownMenuItem>
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+          {filteredTables.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={5} className="text-center py-8">
+                No tables found
               </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            filteredTables.map((table) => (
+              <TableRow key={table.id}>
+                <TableCell className="font-medium">Table {table.id}</TableCell>
+                <TableCell>{table.capacity} people</TableCell>
+                <TableCell>
+                  {table.location.charAt(0).toUpperCase() +
+                    table.location.slice(1)}
+                </TableCell>
+                <TableCell>{getStatusBadge(table.status)}</TableCell>
+                <TableCell>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem>
+                        <Link
+                          href={`/dashboard/tables/${table.id}`}
+                          className="flex items-center"
+                        >
+                          <Edit className="mr-2 h-4 w-4" />
+                          <span>Edit</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      {table.status === "available" && (
+                        <DropdownMenuItem>
+                          <Link
+                            href={`/dashboard/reservations/new?table=${table.id}`}
+                            className="flex items-center"
+                          >
+                            <Calendar className="mr-2 h-4 w-4" />
+                            <span>Reserve</span>
+                          </Link>
+                        </DropdownMenuItem>
+                      )}
+                      {table.status === "available" && (
+                        <DropdownMenuItem
+                          className="text-red-600 cursor-pointer"
+                          onClick={() => handleDelete(table.id)}
+                        >
+                          <Trash className="h-4 w-4" />
+                          <span>Delete</span>
+                        </DropdownMenuItem>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

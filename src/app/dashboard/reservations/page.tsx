@@ -5,16 +5,37 @@ import { Button } from "@/ui/button"
 import { Input } from "@/ui/input"
 import { PlusCircle } from "lucide-react"
 import Link from "next/link"
-import { useSearchParams } from "next/navigation"
-import { useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useState, useEffect } from "react"
 
 export default function ReservationsPage() {
-  const [currentQuery, setCurrentQuery] = useState("")
+  const router = useRouter()
   const searchParams = useSearchParams()
+  const date = searchParams?.get("date") || new Date().toISOString().split("T")[0]
+  const clientQuery = searchParams?.get("client") || ""
+  
+  const [currentQuery, setCurrentQuery] = useState(clientQuery)
+  
+  const updateUrlWithClient = (query: string) => {
+    const params = new URLSearchParams(searchParams.toString())
+    if (query) {
+      params.set("client", query)
+    } else {
+      params.delete("client")
+    }
+    router.push(`?${params.toString()}`)
+  }
+  
   const handleSearch = (query: string) => {
     setCurrentQuery(query)
+    updateUrlWithClient(query)
   }
-  const date = searchParams?.get("date") || new Date().toISOString().split("T")[0]
+  
+  // Handle the initial URL parameters
+  useEffect(() => {
+    setCurrentQuery(clientQuery)
+  }, [clientQuery])
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -32,6 +53,7 @@ export default function ReservationsPage() {
         <Input
           placeholder="Search by client..."
           className="max-w-sm"
+          value={currentQuery}
           onChange={(e) => handleSearch(e.target.value)}
         />
       </div>

@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/ui/button"
 import { Calendar } from "@/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/ui/popover"
-import { format, parse } from "date-fns"
+import { format, parse, isBefore, startOfDay } from "date-fns"
 import { enUS } from "date-fns/locale"
 import { CalendarIcon } from "lucide-react"
 import * as React from "react"
@@ -29,6 +29,13 @@ export function DatePicker({
         if (Number.isNaN(parsedDate.getTime())) {
           return new Date()
         }
+        
+        // If date is in the past, return today
+        const today = startOfDay(new Date())
+        if (isBefore(parsedDate, today)) {
+          return today
+        }
+        
         return parsedDate
       } catch {
         return new Date()
@@ -61,6 +68,8 @@ export function DatePicker({
     }
   }
 
+  const today = startOfDay(new Date())
+  
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -86,6 +95,7 @@ export function DatePicker({
           onSelect={handleDateSelect}
           initialFocus
           locale={enUS}
+          disabled={(date) => isBefore(date, today)}
         />
       </PopoverContent>
     </Popover>
