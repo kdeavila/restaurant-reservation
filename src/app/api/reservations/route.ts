@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 // Función para verificar si dos intervalos de tiempo se superponen
 function isTimeOverlap(start1: string, end1: string, start2: string, end2: string): boolean {
@@ -39,7 +40,7 @@ const reservations = [
   },
 ];
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const date = searchParams.get("date");
 
@@ -57,7 +58,7 @@ export async function GET(request: Request) {
   return NextResponse.json(filteredReservations);
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     

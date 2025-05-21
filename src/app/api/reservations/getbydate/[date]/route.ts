@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-// Usando la misma simulación de base de datos
 const reservations = [
   {
     id: "1",
@@ -22,11 +22,17 @@ const reservations = [
   },
 ];
 
+interface RouteParams {
+  params: {
+    date: string;
+  };
+}
+
 export async function GET(
-  request: Request,
-  { params }: { params: { date: string } }
+  request: NextRequest,
+  context: RouteParams
 ) {
-  const { date } = params;
+  const { date } = context.params;
 
   const filteredReservations = reservations.filter(
     (reservation) => reservation.date === date
